@@ -224,7 +224,6 @@ class ObterDados:
                 # href vai ter o conteudo da referencia em HTML
                 href = y['href']
 
-
                 chave_procura = 'rebid\_m3\.asp\?CodD\='
                 href = re.sub(chave_procura, '', href)
 

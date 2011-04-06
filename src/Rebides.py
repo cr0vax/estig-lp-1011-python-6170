@@ -112,7 +112,7 @@ class MyFrame(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("Rebides")
-        self.SetSize((687, 405))
+        self.SetSize((746, 489))
         # end wxGlade
 
     def __do_layout(self):
