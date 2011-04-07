@@ -121,8 +121,9 @@ class BaseDados:
                            id_estabelecimento INTEGER REFERENCES estabelecimentos (id_estabelecimento),
                            id_categoria INTEGER REFERENCES categorias (id_categoria),
                            id_regime INTEGER REFERENCES regimes (id_regime),
-                           id_tipo_estabelecimento INTEGER REFERENCES 
-                           tipos_estabelecimento (id_tipo_estabelecimento))
+                           id_tipo_estabelecimento INTEGER REFERENCES tipos_estabelecimento (id_tipo_estabelecimento),
+                           id_grau INTEGER REFERENCES graus (id_grau),
+                           id_curso INTEGER REFERENCES cursos (id_curso))
                        """)
 
 
@@ -240,6 +241,8 @@ class BaseDados:
         C_GRAU = 2
         C_CURSO = 3
         C_ANO = 6
+        
+        print "Inicio do preenchimento das fichas de curso"
 
         # uma linha corresponde a uma entrada 
         for linha in lista:
@@ -276,33 +279,50 @@ class BaseDados:
                     docente = r[0]
                 except:
                     continue
-
-                # insere na base de dados
-                cmd = """INSERT INTO fichas_curso 
-                         (ano, id_docente, id_grau, id_curso)
-                         VALUES 
-                         ('{0}','{1}','{2}','{3}') """.\
+                
+                # valida se já está inserido na bd
+                cmd = """SELECT count(*) FROM fichas_curso 
+                        WHERE 
+                            ano = '{0}' and
+                            id_docente = '{1}' and
+                            id_grau = '{2}' and
+                            id_curso = '{3}'""".\
                     format(x[C_ANO], 
                            docente, 
                            grau, 
                            curso)
-##                    format(x[C_ANO], 
-##                           docente.encode('utf-8'), 
-##                           grau.encode('utf-8'), 
-##                           curso.encode('utf-8'))
                 try:
-                    #print cmd
                     cursor.execute(cmd)
+                    inserido = r[0]
                 except:
+                    print cmd
                     continue
+                pass
+
+                if inserido <= 0:                    
+                    # insere na base de dados
+                    cmd = """INSERT INTO fichas_curso 
+                             (ano, id_docente, id_grau, id_curso)
+                             VALUES 
+                             ('{0}','{1}','{2}','{3}') """.\
+                        format(x[C_ANO], 
+                               docente, 
+                               grau, 
+                               curso)
+                    try:
+                        #print cmd
+                        cursor.execute(cmd)
+                    except:
+                        continue
+                    pass
+                    
                 pass
 
             
             pass
 
+        print "Conclusão do preenchimento das fichas de curso"
         conn.commit()
-        
-        
         pass
 
     def preencher_fichas_docencia(self, lista, conn, cursor):
@@ -315,6 +335,8 @@ class BaseDados:
         C_ANO = 6
         C_TIPO_ENSINO = 7
         C_ESTABELECIMENTO = 8
+        
+        print "Inicio do preenchimento das fichas de docencia"
 
         # uma linha corresponde a uma entrada 
         for linha in lista:
@@ -382,6 +404,28 @@ class BaseDados:
                     tipo_estabelecimento = r[0]
                 except:
                     continue
+                
+                # selecciona a referência do grau
+                #cmd = """SELECT designacao FROM graus WHERE designacao = '{0}'""".\
+                cmd = """SELECT id_grau FROM graus WHERE designacao = '{0}'""".\
+                    format(x[C_GRAU].replace("'", "''", 1))
+                try:
+                    cursor.execute(cmd)
+                    r = cursor.fetchone()
+                    grau = r[0]
+                except:
+                    continue
+
+                # selecciona a referência do curso
+                #cmd = """SELECT designacao FROM cursos WHERE designacao = '{0}'""".\
+                cmd = """SELECT id_curso FROM cursos WHERE designacao = '{0}'""".\
+                    format(x[C_CURSO].replace("'", "''", 1))
+                try:
+                    cursor.execute(cmd)
+                    r = cursor.fetchone()
+                    curso = r[0]
+                except:
+                    continue
 
                 # insere na base de dados
                 cmd = """INSERT INTO fichas_docencia 
@@ -390,11 +434,13 @@ class BaseDados:
                           id_estabelecimento, 
                           id_categoria,
                           id_regime, 
-                          id_tipo_estabelecimento)
+                          id_tipo_estabelecimento,
+                          id_grau,
+                          id_curso)
                          VALUES 
-                         ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}') 
+                         ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}') 
                       """.format(x[C_ANO], docente, estabelecimento, categoria, 
-                                 regime, tipo_estabelecimento)
+                                 regime, tipo_estabelecimento, grau, curso)
                 #print cmd
                          
                 try:
@@ -404,6 +450,7 @@ class BaseDados:
                 pass
             pass
 
+        print "Conclusão do preenchimento das fichas de docencia"
         conn.commit()
         pass
 
@@ -449,9 +496,9 @@ class BaseDados:
         # preenchimento da informação de cada docente
         self.preencher_docentes(lista, conn, cursor)
 
-        # preencher ficha de cursos
-        self.preencher_fichas_curso(lista, conn, cursor)
-        cursor.close()
+##        # preencher ficha de cursos
+##        self.preencher_fichas_curso(lista, conn, cursor)
+##        cursor.close()
 
         # preencher fichas docencia
         self.preencher_fichas_docencia(lista, conn, cursor)
