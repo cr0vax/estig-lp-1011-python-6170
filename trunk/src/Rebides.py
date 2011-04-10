@@ -57,8 +57,6 @@ class MyFrame(wx.Frame):
         Counters.AppendItem(self.tnotithespy)
         self.tnotpiapy = wx.MenuItem(Counters, wx.NewId(), "Total number of teachers per institution and per year", "", wx.ITEM_NORMAL)
         Counters.AppendItem(self.tnotpiapy)
-        self.tnotpeapy = wx.MenuItem(Counters, wx.NewId(), "Total number of teachers per establishment and per year", "", wx.ITEM_NORMAL)
-        Counters.AppendItem(self.tnotpeapy)
         self.tnotpdapy = wx.MenuItem(Counters, wx.NewId(), "Total number of teachers per degree and per year", "", wx.ITEM_NORMAL)
         Counters.AppendItem(self.tnotpdapy)
         self.tnotpdpeapy = wx.MenuItem(Counters, wx.NewId(), "Total number of teachers per degree, per establishment and per year", "", wx.ITEM_NORMAL)
@@ -99,7 +97,6 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.evt_collect_all, self.CollectAll)
         self.Bind(wx.EVT_MENU, self.evt_tnotithespy, self.tnotithespy)
         self.Bind(wx.EVT_MENU, self.evt_tnotpiapy, self.tnotpiapy)
-        self.Bind(wx.EVT_MENU, self.evt_tnotpeapy, self.tnotpeapy)
         self.Bind(wx.EVT_MENU, self.evt_tnotpdapy, self.tnotpdapy)
         self.Bind(wx.EVT_MENU, self.evt_tnotpdpeapy, self.tnotpdpeapy)
         self.Bind(wx.EVT_MENU, self.evt_loipy, self.loipy)
@@ -127,23 +124,23 @@ class MyFrame(wx.Frame):
         event.Skip()
 
     def evt_tnotithespy(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `evt_tnotithespy' not implemented!"
+        self.main.get_teacher_stats('tnotithespy')
         event.Skip()
 
     def evt_tnotpiapy(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `evt_tnotpiapy' not implemented!"
+        self.main.get_teacher_stats('tnotpiapy')
         event.Skip()
 
     def evt_tnotpeapy(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `evt_tnotpeapy' not implemented!"
+        self.main.get_teacher_stats('tnotpeapy')
         event.Skip()
 
     def evt_tnotpdapy(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `evt_tnotpdapy' not implemented!"
+        self.main.get_teacher_stats('tnotpdapy')
         event.Skip()
 
     def evt_tnotpdpeapy(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `evt_tnotpdpeapy' not implemented!"
+        self.main.get_teacher_stats('tnotpdpeapy')
         event.Skip()
 
     def evt_loipy(self, event): # wxGlade: MyFrame.<event_handler>
@@ -209,11 +206,11 @@ class MyFrame(wx.Frame):
         event.Skip()
 
     def evt_start_server(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `evt_start_server' not implemented"
+        self.main.http_start_server()
         event.Skip()
 
     def evt_stop_server(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `evt_stop_server' not implemented"
+        self.main.http_stop_server()
         event.Skip()
 
 # end of class MyFrame
