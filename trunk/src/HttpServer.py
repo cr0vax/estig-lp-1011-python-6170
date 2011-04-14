@@ -3,7 +3,6 @@
 # Servidor HTTP com as páginas de estatísticas
 import SimpleHTTPServer
 import SocketServer
-import threading
 from KThread import *
 
 class HttpServer (threading.Thread):
@@ -11,23 +10,30 @@ class HttpServer (threading.Thread):
     regularly for the stopped() condition."""
 
     def stop (self):
-        #self._stop.set()
-        self.A.kill()
+        self.server.kill()
+        print "HTTP server stopped"
+        pass
+    pass
 
     def stopped (self):
         return self._stop.isSet()
+        pass
+    pass
     
     def start (self):
-        self.A = KThread(target=self.start_thread)
-        self.A.start()
+        self.server = KThread(target=self.start_thread)
+        self.server.start()
+        pass
+    pass
 
     def start_thread (self):
-        PORT = 80                     # port used by the http server
+        PORT = 8000                     # port used by the http server
         
         Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-        httpd = SocketServer.TCPServer(("localhost", PORT), Handler)
+        httpd = SocketServer.TCPServer(('', PORT), Handler)
         
-        print "serving at port", PORT
+        print "HTTP serving at port", PORT
         httpd.serve_forever()
         pass
     pass
+    

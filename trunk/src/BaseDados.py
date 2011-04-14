@@ -70,15 +70,6 @@ class BaseDados:
                           ("nome_completo" TEXT, 
                            "id_docente" INTEGER PRIMARY KEY)
                        """)
-                    
-        # tabela fichas_curso
-        cursor.execute("""CREATE TABLE IF NOT EXISTS fichas_curso
-                          (id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                           ano INTEGER,
-                           id_docente INTEGER REFERENCES docentes (id_docente),
-                           id_grau INTEGER REFERENCES graus (id_grau),
-                           id_curso INTEGER REFERENCES cursos (id_curso))
-                       """)
         
         # tabela fichas_docencia
         cursor.execute("""CREATE TABLE IF NOT EXISTS fichas_docencia

@@ -31,22 +31,18 @@ class Main:
         st = Statistics()
         
         consultas = {
-            #Total number of teachers in the higher education system per year
-            'tnotithespy'   : ["ano", "ano"],
-            #Total number of teachers per institution and per year
-            'tnotpiapy'     : ["ano, estabelecimentos.designacao", "ano, id_estabelecimento"],
-            #Total number of teachers per degree and per year
-            'tnotpdapy'     : ["ano, graus.designacao", "ano, id_grau"],
-            #Total number of teachers per degree, per establishment and per year
-            'tnotpdpeapy'   : ["ano, estabelecimentos.designacao, graus.designacao", "ano, id_estabelecimento, id_grau"]
+            'tnotithespy'   : ["ano", "ano", "Total number of teachers in the higher education system per year"],
+            'tnotpiapy'     : ["ano, estabelecimentos.designacao", "ano, id_estabelecimento", "Total number of teachers per institution and per year"],
+            'tnotpdapy'     : ["ano, graus.designacao", "ano, id_grau", "Total number of teachers per degree and per year"],
+            'tnotpdpeapy'   : ["ano, estabelecimentos.designacao, graus.designacao", "ano, id_estabelecimento, id_grau", "Total number of teachers per degree, per establishment and per year"]
         }
         
         # valida quais os parametros para a stat escolhida
         #select, group_by = consultas[which_stat]()
-        select, group_by = consultas.get(which_stat)
+        select, group_by, title = consultas.get(which_stat)
         
         # retorna os dados da consulta efectuada
-        st.count_teachers(select, group_by)
+        st.count_teachers(select, group_by, title)
         pass
     pass
     
