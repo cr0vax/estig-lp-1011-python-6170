@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python
-# a bar plot with errorbars
-import numpy as np
 
 # Estes imports servem para não dar erros de Bad Screen Distance 320
 import matplotlib
@@ -9,7 +6,7 @@ matplotlib.use('QT4Agg')
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
 
-# imports do gráfico e sql
+# imports do gráfico
 import matplotlib.pyplot as plt
 
 class Graphs:
@@ -21,9 +18,9 @@ class Graphs:
         xlabel = []
         ind = []                        # índice
 
-        bar_width = (2.0/len(data))     # largura das barras
+##        bar_width = (2.0/len(data))     # largura das barras
+        bar_width = (0.1)     # largura das barras
         FONT_SIZE = 10                  # tamanho da fonte
-        
         
         for row in data:
             x.append(row[0])
@@ -34,14 +31,10 @@ class Graphs:
 
         plt.bar(x, y, width=bar_width, bottom=0, color='g')
         plt.plot(y)
-        #plt.xticks(ind1, (inst), rotation='vertical', verticalalignment='bottom', horizontalalignment='right', size = 10)
-##        plt.xticks(ind, xlabel, verticalalignment='bottom', horizontalalignment='center', roatation=45, size = FONT_SIZE)
         plt.xticks( ind, xlabel, horizontalalignment='right', rotation=45 )
-        #plt.xlabel(xlabel)
         plt.title(title)
         plt.grid(True)
         plt.show()
-
 
         pass
     pass
