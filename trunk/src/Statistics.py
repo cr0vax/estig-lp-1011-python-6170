@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import sqlite3
-from Graphs import Graphs
 
 class Statistics:
 
@@ -20,7 +19,7 @@ class Statistics:
     #---------------------------------------
     # Estatisticas sobre professores
     #---------------------------------------    
-    def count_teachers(self, select, group_by, title):
+    def count_teachers(self, select, group_by):
         
         group_by = group_by.replace(" ", "")
         group_by = group_by.replace(",", ",fd.")
@@ -31,9 +30,7 @@ class Statistics:
                         estabelecimentos.id_estabelecimento = fd.id_estabelecimento
                     INNER JOIN graus on
                         graus.id_grau = fd.id_grau
-                 GROUP BY {1}
-                 ORDER BY TotalDocentes DESC
-                 LIMIT 10""".\
+                 GROUP BY {1}""".\
                     format(select,
                            group_by)
                 
@@ -42,8 +39,7 @@ class Statistics:
             
             r = self.cursor.fetchall()
             
-            # gera gráfico com os dados
-            graph = Graphs(r, title)
+            return r
             
         except Exception, e:
             print 'Got error %s' % e

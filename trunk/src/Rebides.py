@@ -124,23 +124,23 @@ class MyFrame(wx.Frame):
         event.Skip()
 
     def evt_tnotithespy(self, event): # wxGlade: MyFrame.<event_handler>
-        self.main.get_teacher_stats('tnotithespy')
+        self.main.make_teachers_graph('tnotithespy')
         event.Skip()
 
     def evt_tnotpiapy(self, event): # wxGlade: MyFrame.<event_handler>
-        self.main.get_teacher_stats('tnotpiapy')
+        self.main.make_teachers_graph('tnotpiapy')
         event.Skip()
 
     def evt_tnotpeapy(self, event): # wxGlade: MyFrame.<event_handler>
-        self.main.get_teacher_stats('tnotpeapy')
+        self.main.make_teachers_graph('tnotpeapy')
         event.Skip()
 
     def evt_tnotpdapy(self, event): # wxGlade: MyFrame.<event_handler>
-        self.main.get_teacher_stats('tnotpdapy')
+        self.main.make_teachers_graph('tnotpdapy')
         event.Skip()
 
     def evt_tnotpdpeapy(self, event): # wxGlade: MyFrame.<event_handler>
-        self.main.get_teacher_stats('tnotpdpeapy')
+        self.main.make_teachers_graph('tnotpdpeapy')
         event.Skip()
 
     def evt_loipy(self, event): # wxGlade: MyFrame.<event_handler>

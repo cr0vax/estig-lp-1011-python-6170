@@ -3,6 +3,7 @@
 from BaseDados import BaseDados
 from Statistics import Statistics
 from HttpServer import HttpServer
+from Graphs import Graphs
 
 class Main:
     '''
@@ -42,7 +43,24 @@ class Main:
         select, group_by, title = consultas.get(which_stat)
         
         # retorna os dados da consulta efectuada
-        st.count_teachers(select, group_by, title)
+        data = st.count_teachers(select, group_by)
+        
+        return data, title
+    
+        pass
+    pass
+    
+    #---------------------------
+    # Menu estatisticas
+    #---------------------------
+    def make_teachers_graph(self, which_stat):
+        
+        # trata os dados
+        data, title = self.get_teacher_stats(which_stat)
+        
+        # gera gráfico com os dados
+        graph = Graphs(data, title)
+        
         pass
     pass
     
