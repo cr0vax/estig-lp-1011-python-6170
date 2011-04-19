@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from BaseDados import BaseDados
-from Statistics import Statistics
+from Dados import Dados
 from HttpServer import HttpServer
 from Graphs import Graphs
 
@@ -11,6 +11,7 @@ class Main:
     
         ano - year of the data to be collected
     '''
+    
     def collect_data(self, ano):
         bd = BaseDados()
         
@@ -29,7 +30,7 @@ class Main:
     #
     #   which_stat - 
     def get_teacher_stats(self, which_stat):
-        st = Statistics()
+        st = Dados()
         
         consultas = {
             'tnotithespy'   : ["ano", "ano", "Total number of teachers in the higher education system per year"],
@@ -48,6 +49,51 @@ class Main:
         return data, title
     
         pass
+    pass
+
+    #---------------------------------
+    # TODO: constroi as estatisticas
+    #---------------------------------
+    def get_statistics(self, years, groupby, count):
+        print "get_statistics"
+        bd = Dados()
+        
+        # transforma os elementos de years activos em string
+        filtered_years = self.filter_active(years)
+        # transforma os elementos de groupby activos em string
+        filtered_groupby = self.filter_active(groupby)
+        
+        # se tudo estiver bem gera gráfico
+        data = bd.statistics(filtered_years, filtered_groupby, count)
+        
+        #title = 'Total ' + count + 's of years ' + ','.join([str(i) for i in filtered_years]), ' by ', ','.join([str(i) for i in filtered_groupby])
+        title = 'Total %ss of years %s grouped by %s', count, ','.join([str(i) for i in filtered_years]), ','.join([str(i) for i in filtered_groupby])
+        print title
+        
+        graph = Graphs(data, title)
+        
+        pass
+    pass
+    
+    #--------------------------
+    # Retorna uma lista com os itens que tenham a segunda posição a True
+    #
+    #   list_to_be_filtered - lista a ser filtrada
+    #--------------------------
+    def filter_active(self, list_to_be_filtered):
+        
+        # cria a lista a ser devolvida
+        filtered_list = []
+        
+        # se o item for True adiciona à lista a ser devolvida
+        for l in list_to_be_filtered:
+            if l[1] == True:
+                filtered_list.append(l[0])
+            pass
+        pass
+            
+        # retorna a lista filtrada
+        return filtered_list
     pass
     
     #---------------------------
