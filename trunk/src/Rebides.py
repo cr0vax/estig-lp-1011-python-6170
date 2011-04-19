@@ -10,6 +10,22 @@ from Main import Main
 
 
 
+class MyGraphs(wx.MDIChildFrame):
+    def __init__(self, *args, **kwds):
+        # content of this block not found: did you rename this class?
+        pass
+
+    def __set_properties(self):
+        # content of this block not found: did you rename this class?
+        pass
+
+    def __do_layout(self):
+        # content of this block not found: did you rename this class?
+        pass
+
+# end of class MyGraphs
+
+
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         # iniciar ligação ao código aplicacional
@@ -18,6 +34,11 @@ class MyFrame(wx.Frame):
         # begin wxGlade: MyFrame.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
+        self.pane_general = wx.Notebook(self, -1, style=wx.NB_RIGHT)
+        self.pane_statistics = wx.Panel(self.pane_general, -1)
+        self.sizer_5_staticbox = wx.StaticBox(self.pane_statistics, -1, "Group by")
+        self.sizer_6_staticbox = wx.StaticBox(self.pane_statistics, -1, "Count")
+        self.sizer_4_staticbox = wx.StaticBox(self.pane_statistics, -1, "Years")
         
         # Menu Bar
         self.Rebides_menubar = wx.MenuBar()
@@ -79,6 +100,27 @@ class MyFrame(wx.Frame):
         self.Rebides_menubar.Append(self.Http, "Http")
         self.SetMenuBar(self.Rebides_menubar)
         # Menu Bar end
+        self.Rebides_statusbar = self.CreateStatusBar(1, 0)
+        self.chk_year_0 = wx.CheckBox(self.pane_statistics, -1, "2000")
+        self.chk_year_1 = wx.CheckBox(self.pane_statistics, -1, "2001")
+        self.chk_year_2 = wx.CheckBox(self.pane_statistics, -1, "2002")
+        self.chk_year_3 = wx.CheckBox(self.pane_statistics, -1, "2003")
+        self.chk_year_4 = wx.CheckBox(self.pane_statistics, -1, "2004")
+        self.chk_year_5 = wx.CheckBox(self.pane_statistics, -1, "2005")
+        self.chk_year_6 = wx.CheckBox(self.pane_statistics, -1, "2006")
+        self.chk_year_7 = wx.CheckBox(self.pane_statistics, -1, "2007")
+        self.chk_year_8 = wx.CheckBox(self.pane_statistics, -1, "2008")
+        self.chk_year_9 = wx.CheckBox(self.pane_statistics, -1, "2009")
+        self.chk_gb_year = wx.CheckBox(self.pane_statistics, -1, "Year")
+        self.chk_gb_teacher = wx.CheckBox(self.pane_statistics, -1, "Teacher")
+        self.chk_gb_establishment = wx.CheckBox(self.pane_statistics, -1, "Establishment")
+        self.chk_gb_category = wx.CheckBox(self.pane_statistics, -1, "Category")
+        self.chk_gb_system = wx.CheckBox(self.pane_statistics, -1, "System")
+        self.chk_gb_establishment_type = wx.CheckBox(self.pane_statistics, -1, "Establishment Type")
+        self.chk_gb_grade = wx.CheckBox(self.pane_statistics, -1, "Grade")
+        self.chk_gb_course = wx.CheckBox(self.pane_statistics, -1, "Course")
+        self.radio_box_1 = wx.RadioBox(self.pane_statistics, -1, "", choices=["Year", "Teacher", "Establishment", "Category", "System", "Establishment Type", "Grade", "Course"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
+        self.btn_statistics = wx.Button(self.pane_statistics, -1, "Generate Statistics")
 
         self.__set_properties()
         self.__do_layout()
@@ -104,17 +146,57 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.evt_lohoadpy, self.lohoadpy)
         self.Bind(wx.EVT_MENU, self.evt_start_server, self.StartServer)
         self.Bind(wx.EVT_MENU, self.evt_stop_server, self.StopServer)
+        self.Bind(wx.EVT_BUTTON, self.evt_generate_statistics, self.btn_statistics)
         # end wxGlade
 
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("Rebides")
-        self.SetSize((746, 489))
+        self.SetSize((825, 549))
+        self.Rebides_statusbar.SetStatusWidths([0])
+        # statusbar fields
+        Rebides_statusbar_fields = ["Ready"]
+        for i in range(len(Rebides_statusbar_fields)):
+            self.Rebides_statusbar.SetStatusText(Rebides_statusbar_fields[i], i)
+        self.radio_box_1.SetToolTipString("Select which counter to be shown")
+        self.radio_box_1.SetSelection(0)
         # end wxGlade
 
     def __do_layout(self):
         # begin wxGlade: MyFrame.__do_layout
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
+        sizer_2 = wx.BoxSizer(wx.VERTICAL)
+        sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_6 = wx.StaticBoxSizer(self.sizer_6_staticbox, wx.VERTICAL)
+        sizer_5 = wx.StaticBoxSizer(self.sizer_5_staticbox, wx.VERTICAL)
+        sizer_4 = wx.StaticBoxSizer(self.sizer_4_staticbox, wx.VERTICAL)
+        sizer_4.Add(self.chk_year_0, 0, 0, 0)
+        sizer_4.Add(self.chk_year_1, 0, 0, 0)
+        sizer_4.Add(self.chk_year_2, 0, 0, 0)
+        sizer_4.Add(self.chk_year_3, 0, 0, 0)
+        sizer_4.Add(self.chk_year_4, 0, 0, 0)
+        sizer_4.Add(self.chk_year_5, 0, 0, 0)
+        sizer_4.Add(self.chk_year_6, 0, 0, 0)
+        sizer_4.Add(self.chk_year_7, 0, 0, 0)
+        sizer_4.Add(self.chk_year_8, 0, 0, 0)
+        sizer_4.Add(self.chk_year_9, 0, 0, 0)
+        sizer_3.Add(sizer_4, 1, wx.EXPAND, 0)
+        sizer_5.Add(self.chk_gb_year, 0, 0, 0)
+        sizer_5.Add(self.chk_gb_teacher, 0, 0, 0)
+        sizer_5.Add(self.chk_gb_establishment, 0, 0, 0)
+        sizer_5.Add(self.chk_gb_category, 0, 0, 0)
+        sizer_5.Add(self.chk_gb_system, 0, 0, 0)
+        sizer_5.Add(self.chk_gb_establishment_type, 0, 0, 0)
+        sizer_5.Add(self.chk_gb_grade, 0, 0, 0)
+        sizer_5.Add(self.chk_gb_course, 0, 0, 0)
+        sizer_3.Add(sizer_5, 1, wx.EXPAND, 0)
+        sizer_6.Add(self.radio_box_1, 0, 0, 0)
+        sizer_3.Add(sizer_6, 1, wx.EXPAND, 0)
+        sizer_2.Add(sizer_3, 1, wx.EXPAND, 0)
+        sizer_2.Add(self.btn_statistics, 0, wx.EXPAND, 0)
+        self.pane_statistics.SetSizer(sizer_2)
+        self.pane_general.AddPage(self.pane_statistics, "Statistics")
+        sizer_1.Add(self.pane_general, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_1)
         self.Layout()
         # end wxGlade
@@ -144,7 +226,7 @@ class MyFrame(wx.Frame):
         event.Skip()
 
     def evt_loipy(self, event): # wxGlade: MyFrame.<event_handler>
-        print "Event handler `evt_loipy' not implemented!"
+        x = MyGraphs(self)
         event.Skip()
 
     def evt_loiepy(self, event): # wxGlade: MyFrame.<event_handler>
@@ -211,6 +293,48 @@ class MyFrame(wx.Frame):
 
     def evt_stop_server(self, event): # wxGlade: MyFrame.<event_handler>
         self.main.http_stop_server()
+        event.Skip()
+
+    def evt_generate_statistics(self, event): # wxGlade: MyFrame.<event_handler>
+        count_values = {
+            0         : 'year',
+            1         : 'teacher',
+            2         : 'establishment',
+            3         : 'category',
+            4         : 'system',
+            5         : 'establishment_type',
+            6         : 'grade',
+            7         : 'course'}
+        
+        # years data
+        years = []
+        years.append([0, self.chk_year_0.GetValue()])
+        years.append([1, self.chk_year_1.GetValue()])
+        years.append([2, self.chk_year_2.GetValue()])
+        years.append([3, self.chk_year_3.GetValue()])
+        years.append([4, self.chk_year_4.GetValue()])
+        years.append([5, self.chk_year_5.GetValue()])
+        years.append([6, self.chk_year_6.GetValue()])
+        years.append([7, self.chk_year_7.GetValue()])
+        years.append([8, self.chk_year_8.GetValue()])
+        years.append([9, self.chk_year_9.GetValue()])
+        
+        # group by data
+        groupby = []
+        groupby.append(['category', self.chk_gb_category.GetValue()])
+        groupby.append(['course', self.chk_gb_course.GetValue()])
+        groupby.append(['establishment', self.chk_gb_establishment.GetValue()])
+        groupby.append(['establishment_type', self.chk_gb_establishment_type.GetValue()])
+        groupby.append(['grade', self.chk_gb_grade.GetValue()])
+        groupby.append(['system', self.chk_gb_system.GetValue()])
+        groupby.append(['teacher', self.chk_gb_teacher.GetValue()])
+        groupby.append(['year', self.chk_gb_year.GetValue()])
+             
+        # count
+        count = count_values.get(self.radio_box_1.GetSelection())
+        
+        # get statistics based on criteria
+        self.main.get_statistics(years, groupby, count)
         event.Skip()
 
 # end of class MyFrame
