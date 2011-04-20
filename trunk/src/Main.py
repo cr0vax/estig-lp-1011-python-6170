@@ -4,6 +4,7 @@ from BaseDados import BaseDados
 from Dados import Dados
 from HttpServer import HttpServer
 from Graphs import Graphs
+from Html import Html
 
 class Main:
     '''
@@ -52,7 +53,7 @@ class Main:
     pass
 
     #---------------------------------
-    # TODO: constroi as estatisticas
+    # Constroi as estatisticas
     #---------------------------------
     def get_statistics(self, years, groupby, count):
         print "get_statistics"
@@ -60,16 +61,20 @@ class Main:
         
         # transforma os elementos de years activos em string
         filtered_years = self.filter_active(years)
+
         # transforma os elementos de groupby activos em string
         filtered_groupby = self.filter_active(groupby)
         
         # se tudo estiver bem gera gráfico
         data = bd.statistics(filtered_years, filtered_groupby, count)
         
-        #title = 'Total ' + count + 's of years ' + ','.join([str(i) for i in filtered_years]), ' by ', ','.join([str(i) for i in filtered_groupby])
-        title = 'Total %ss of years %s grouped by %s', count, ','.join([str(i) for i in filtered_years]), ','.join([str(i) for i in filtered_groupby])
-        print title
+        # constroi o título a dar ao gráfico
+        title = """Total number of {0} for years {1} groupped by {2}""".\
+                    format(count + 's',
+                           ','.join(['200' + str(i) for i in filtered_years]),
+                           ','.join([str(i) for i in filtered_groupby]))
         
+        # gera o gráfico
         graph = Graphs(data, title)
         
         pass
@@ -91,6 +96,9 @@ class Main:
                 filtered_list.append(l[0])
             pass
         pass
+        
+        # altera a ordem da lista
+        filtered_list.reverse()
             
         # retorna a lista filtrada
         return filtered_list
@@ -110,22 +118,31 @@ class Main:
         pass
     pass
     
+    def get_lists(self):
+        lists(self, select, where)
+        pass
+    pass
+    
+    
     #---------------------------
     # Menu HTTP
     #---------------------------
     
     # Inicia o servidor http
     def http_start_server(self):
-        self.http_server = HttpServer()
         
+        # inicia o servidor
+        self.http_server = HttpServer()
         self.http_server.start()
+        
+        # cria páginas
+        html = Html()
+        html.create_pages()
         pass
     pass
     
-    # Para o servidor http
+    # Pára o servidor http
     def http_stop_server(self):
-        #http_server = HttpServer()
-        
         self.http_server.stop()
         pass
     pass

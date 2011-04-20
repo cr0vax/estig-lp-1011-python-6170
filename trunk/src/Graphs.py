@@ -18,8 +18,7 @@ class Graphs:
         xlabel = []
         ind = []                        # índice
 
-##        bar_width = (2.0/len(data))     # largura das barras
-        bar_width = (0.1)     # largura das barras
+        bar_width = (0.1)               # largura das barras
         FONT_SIZE = 10                  # tamanho da fonte
         
         for row in data:
@@ -29,7 +28,7 @@ class Graphs:
 
         ind = range(len(xlabel))
 
-        plt.bar(x, y, width=bar_width, bottom=0, color='g')
+        plt.bar(ind, y, width=bar_width, bottom=0, color='g')
         plt.plot(y)
         plt.xticks( ind, xlabel, horizontalalignment='right', rotation=45 )
         plt.title(title)
