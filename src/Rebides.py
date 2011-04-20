@@ -112,14 +112,14 @@ class MyFrame(wx.Frame):
         self.chk_year_8 = wx.CheckBox(self.pane_statistics, -1, "2008")
         self.chk_year_9 = wx.CheckBox(self.pane_statistics, -1, "2009")
         self.chk_gb_year = wx.CheckBox(self.pane_statistics, -1, "Year")
-        self.chk_gb_teacher = wx.CheckBox(self.pane_statistics, -1, "Teacher")
-        self.chk_gb_establishment = wx.CheckBox(self.pane_statistics, -1, "Establishment")
-        self.chk_gb_category = wx.CheckBox(self.pane_statistics, -1, "Category")
-        self.chk_gb_system = wx.CheckBox(self.pane_statistics, -1, "System")
         self.chk_gb_establishment_type = wx.CheckBox(self.pane_statistics, -1, "Establishment Type")
+        self.chk_gb_establishment = wx.CheckBox(self.pane_statistics, -1, "Establishment")
         self.chk_gb_grade = wx.CheckBox(self.pane_statistics, -1, "Grade")
         self.chk_gb_course = wx.CheckBox(self.pane_statistics, -1, "Course")
-        self.radio_box_1 = wx.RadioBox(self.pane_statistics, -1, "", choices=["Year", "Teacher", "Establishment", "Category", "System", "Establishment Type", "Grade", "Course"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
+        self.chk_gb_teacher = wx.CheckBox(self.pane_statistics, -1, "Teacher")
+        self.chk_gb_category = wx.CheckBox(self.pane_statistics, -1, "Category")
+        self.chk_gb_system = wx.CheckBox(self.pane_statistics, -1, "System")
+        self.radio_box_1 = wx.RadioBox(self.pane_statistics, -1, "", choices=["Teacher", "Establishment", "Category", "System", "Establishment Type", "Grade", "Course"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
         self.btn_statistics = wx.Button(self.pane_statistics, -1, "Generate Statistics")
 
         self.__set_properties()
@@ -153,7 +153,7 @@ class MyFrame(wx.Frame):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("Rebides")
         self.SetSize((825, 549))
-        self.Rebides_statusbar.SetStatusWidths([0])
+        self.Rebides_statusbar.SetStatusWidths([825])
         # statusbar fields
         Rebides_statusbar_fields = ["Ready"]
         for i in range(len(Rebides_statusbar_fields)):
@@ -182,13 +182,13 @@ class MyFrame(wx.Frame):
         sizer_4.Add(self.chk_year_9, 0, 0, 0)
         sizer_3.Add(sizer_4, 1, wx.EXPAND, 0)
         sizer_5.Add(self.chk_gb_year, 0, 0, 0)
-        sizer_5.Add(self.chk_gb_teacher, 0, 0, 0)
-        sizer_5.Add(self.chk_gb_establishment, 0, 0, 0)
-        sizer_5.Add(self.chk_gb_category, 0, 0, 0)
-        sizer_5.Add(self.chk_gb_system, 0, 0, 0)
         sizer_5.Add(self.chk_gb_establishment_type, 0, 0, 0)
+        sizer_5.Add(self.chk_gb_establishment, 0, 0, 0)
         sizer_5.Add(self.chk_gb_grade, 0, 0, 0)
         sizer_5.Add(self.chk_gb_course, 0, 0, 0)
+        sizer_5.Add(self.chk_gb_teacher, 0, 0, 0)
+        sizer_5.Add(self.chk_gb_category, 0, 0, 0)
+        sizer_5.Add(self.chk_gb_system, 0, 0, 0)
         sizer_3.Add(sizer_5, 1, wx.EXPAND, 0)
         sizer_6.Add(self.radio_box_1, 0, 0, 0)
         sizer_3.Add(sizer_6, 1, wx.EXPAND, 0)
@@ -242,69 +242,95 @@ class MyFrame(wx.Frame):
         event.Skip()
 
     def evt_collect_2000(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         self.main.collect_data(0)
+        self.set_status_bar_ready(True)
         event.Skip()
         
     def evt_collect_2001(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         self.main.collect_data(1)
+        self.set_status_bar_ready(True)
         event.Skip()
         
     def evt_collect_2002(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         self.main.collect_data(2)
+        self.set_status_bar_ready(True)
         event.Skip()
 
     def evt_collect_2003(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         self.main.collect_data(3)
+        self.set_status_bar_ready(True)
         event.Skip()
 
     def evt_collect_2004(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         self.main.collect_data(4)
+        self.set_status_bar_ready(True)
         event.Skip()
 
     def evt_collect_2005(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         self.main.collect_data(5)
+        self.set_status_bar_ready(True)
         event.Skip()
 
     def evt_collect_2006(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         self.main.collect_data(6)
+        self.set_status_bar_ready(True)
         event.Skip()
 
     def evt_collect_2007(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         self.main.collect_data(7)
+        self.set_status_bar_ready(True)
         event.Skip()
 
     def evt_collect_2008(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         self.main.collect_data(8)
+        self.set_status_bar_ready(True)
         event.Skip()
 
     def evt_collect_2009(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         self.main.collect_data(9)
+        self.set_status_bar_ready(True)
         event.Skip()
 
     def evt_collect_all(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         for i in range(10):
             self.main.collect_data(i)
-            
+        self.set_status_bar_ready(True)
         event.Skip()
 
     def evt_start_server(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         self.main.http_start_server()
+        self.set_status_bar_ready(True)
         event.Skip()
 
     def evt_stop_server(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
         self.main.http_stop_server()
+        self.set_status_bar_ready(True)
         event.Skip()
 
     def evt_generate_statistics(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
+        
         count_values = {
-            0         : 'year',
-            1         : 'teacher',
-            2         : 'establishment',
-            3         : 'category',
-            4         : 'system',
-            5         : 'establishment_type',
-            6         : 'grade',
-            7         : 'course'}
+            0         : 'teacher',
+            1         : 'establishment',
+            2         : 'category',
+            3         : 'system',
+            4         : 'establishment_type',
+            5         : 'grade',
+            6         : 'course'}
         
         # years data
         years = []
@@ -333,9 +359,58 @@ class MyFrame(wx.Frame):
         # count
         count = count_values.get(self.radio_box_1.GetSelection())
         
+        # check years
+        years_ok = False
+        
+        for x in years:
+            if x[1] == True:
+                years_ok = True
+                pass
+            pass
+        pass
+        
+        if years_ok == False:
+            dial = wx.MessageDialog(None, 'You need to choose at least one year option!', 'Years',
+                wx.OK | wx.ICON_EXCLAMATION)
+            ret = dial.ShowModal()
+            self.set_status_bar_ready(True)
+            return
+            
+        # check groupby
+        groupby_ok = False
+        
+        for x in groupby:
+            if x[1] == True:
+                groupby_ok = True
+                pass
+            pass
+        pass
+        
+        if groupby_ok == False:
+            dial = wx.MessageDialog(None, 'You need to choose at least one group by option!', 'Group By',
+                wx.OK | wx.ICON_EXCLAMATION)
+            ret = dial.ShowModal()
+            self.set_status_bar_ready(True)
+            return
+
+        
         # get statistics based on criteria
         self.main.get_statistics(years, groupby, count)
+        
+        # set status bar text
+        self.set_status_bar_ready(True)
         event.Skip()
+        
+    # set status bar text
+    def set_status_bar_ready(self, ready):
+        if ready == True:
+            self.Rebides_statusbar.SetStatusText("Ready", 0)
+            pass
+        else:
+            self.Rebides_statusbar.SetStatusText("Working...", 0)
+            pass
+        pass
+    pass
 
 # end of class MyFrame
     def close_window(self):
