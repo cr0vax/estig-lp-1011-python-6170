@@ -6,6 +6,11 @@ from HttpServer import HttpServer
 from Graphs import Graphs
 from Html import Html
 
+#---------------------------------------
+# Classe responsável pela ponta da GUI à camada aplicacional
+# Autor: Bruno Moreira
+# Número: 6170
+#---------------------------------------
 class Main:
     '''
     Collects data from a specified year
@@ -54,9 +59,12 @@ class Main:
 
     #---------------------------------
     # Constroi as estatisticas
+    #
+    #   years       - anos para gerar estatisticas
+    #   groupby     - campos pelos quais são agrupadas
+    #   count       - o que contar
     #---------------------------------
     def get_statistics(self, years, groupby, count):
-        print "get_statistics"
         bd = Dados()
         
         # transforma os elementos de years activos em string
@@ -65,15 +73,23 @@ class Main:
         # transforma os elementos de groupby activos em string
         filtered_groupby = self.filter_active(groupby)
         
-        # se tudo estiver bem gera gráfico
-        data = bd.statistics(filtered_years, filtered_groupby, count)
-        
         # constroi o título a dar ao gráfico
         title = """Total number of {0} for years {1} groupped by {2}""".\
                     format(count + 's',
                            ','.join(['200' + str(i) for i in filtered_years]),
                            ','.join([str(i) for i in filtered_groupby]))
         
+        # se tudo estiver bem gera gráfico
+        data = bd.get_statistics(filtered_years, filtered_groupby, count)
+        
+        # adiciona a página à bd
+        db = BaseDados()
+        file_name = db.insert_custom_list(title, 1)
+        
+        # Cria a página HTML com a estatistica
+        html = Html()
+        html.create_statistics_page(title, data, filtered_groupby, file_name)
+            
         # gera o gráfico
         graph = Graphs(data, title)
         
@@ -126,18 +142,22 @@ class Main:
     
     #---------------------------
     # Menu HTTP
+    #
+    #   generate_html   - if true generates HTML
     #---------------------------
     
     # Inicia o servidor http
-    def http_start_server(self):
+    def http_start_server(self, generate_html):
         
         # inicia o servidor
         self.http_server = HttpServer()
         self.http_server.start()
         
-        # cria páginas
-        html = Html()
-        html.create_pages()
+        if generate_html == True:
+            
+            # cria páginas
+            html = Html()
+            html.create_index()
         pass
     pass
     

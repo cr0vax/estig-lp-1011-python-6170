@@ -9,6 +9,12 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as Naviga
 # imports do gráfico
 import matplotlib.pyplot as plt
 
+#---------------------------------------
+# Classe responsável por gerar gráficos
+# Autor: Bruno Moreira
+# Número: 6170
+#---------------------------------------
+
 class Graphs:
     
     def __init__(self, data, title):
@@ -22,6 +28,7 @@ class Graphs:
         FONT_SIZE = 10                  # tamanho da fonte
         
         for row in data:
+            print row
             x.append(row[0])
             y.append(row[len(row)-1])
             xlabel.append(row[len(row)-2])

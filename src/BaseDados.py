@@ -4,8 +4,9 @@ import sqlite3
 from ObterDados import ObterDados
 
 #---------------------------------------
-# Operacoes de criação da base de dados
-# Autor: Bruno Moreira
+# Classe responsável pela interação activa na base de dados
+# Autor: Jose Jasnau Caeiro
+# Alterações: Bruno Moreira
 # Número: 6170
 #---------------------------------------
 
@@ -83,7 +84,13 @@ class BaseDados:
                            id_grau INTEGER REFERENCES graus (id_grau),
                            id_curso INTEGER REFERENCES cursos (id_curso))
                        """)
-
+                    
+        # tabela listas
+        cursor.execute("""CREATE TABLE IF NOT EXISTS listas
+                            (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                             "titulo" TEXT NOT NULL,
+                             "tipo" INTEGER NOT NULL)
+                        """)
 
         cursor.close()
         pass
@@ -101,9 +108,7 @@ class BaseDados:
         '''
         conn = sqlite3.connect('rebides.db')
         cursor = conn.cursor()
-        #print "ANO: 200{0}".format(ano)
-        print "Preencher tipos de estabelecimento", ano
-
+        
         d_tipos_estabelecimento = self.dados.obter_codigos_tipo_estabelecimento(ano)
 
         for tipo, codR in d_tipos_estabelecimento.iteritems():
@@ -141,13 +146,15 @@ class BaseDados:
         conn.commit()
         pass
 
+    #------------------------------
+    # Preenche uma tabela com base no tipo
+    #
+    #   lista       - lista com os dados a preencher
+    #   conn        - conexão à base de dados
+    #   cursor      - cursor da base de dados
+    #   tipo        - tabela onde inserir os dados
+    #------------------------------
     def preencher_geral(self, lista, conn, cursor, tipo):
-        d_informacao = {}
-        d_informacao['graus'] = 2
-        d_informacao['cursos'] = 3
-        d_informacao['categorias'] = 4
-        d_informacao['regimes'] = 5
-        d_informacao['estabelecimentos'] = 8
 
         for x in lista:
             cmd = """insert into {0} (designacao) values ('{1}')""".\
@@ -162,7 +169,15 @@ class BaseDados:
             pass
         conn.commit()
         pass
+    pass
 
+    #------------------------------
+    # Preenche a tabela dos docentes
+    #
+    #   lista       - lista com os docentes
+    #   conn        - conexão à base de dados
+    #   cursor      - cursor da base de dados
+    #------------------------------
     def preencher_docentes(self, lista, conn, cursor):
         C_CODIGO = 0
         C_DOCENTE = 1
@@ -170,14 +185,11 @@ class BaseDados:
         # uma linha corresponde a uma entrada 
         for linha in lista:
             for x in linha:
-                #cmd = """insert into {0} (codigo, nome_completo) values ({1}, '{2}')""".\
                 cmd = """insert into {0} (id_docente, nome_completo) values ({1}, '{2}')""".\
                     format('docentes', x[C_CODIGO], x[C_DOCENTE].replace("'", "''"))
-                #print cmd
                 try:
                     cursor.execute(cmd)
                 except:
-                    #print x[C_DOCENTE]
                     continue
                 pass
             pass
@@ -185,6 +197,14 @@ class BaseDados:
         
         pass
 
+    #------------------------------
+    # Filtra os elementos únicos de uma lista
+    #
+    #   lista_entrada   - lista de dados
+    #   tipo            - tipo de informação
+    #
+    #   retorna a lista filtrada
+    #------------------------------
     def organizar_conjuntos_unicos(self, lista_entrada, tipo):
         d_informacao = {}
         d_informacao['graus'] = 2
@@ -206,97 +226,15 @@ class BaseDados:
             pass
 
         return lista
-                         
-    def preencher_fichas_curso(self, lista, conn, cursor):
-        C_CODIGO = 0
-        C_DOCENTE = 1
-        C_GRAU = 2
-        C_CURSO = 3
-        C_ANO = 6
-        
-        print "Inicio do preenchimento das fichas de curso"
+    pass                    
 
-        # uma linha corresponde a uma entrada 
-        for linha in lista:
-            for x in linha:
-                # selecciona a referência do grau
-                #cmd = """SELECT designacao FROM graus WHERE designacao = '{0}'""".\
-                cmd = """SELECT id_grau FROM graus WHERE designacao = '{0}'""".\
-                    format(x[C_GRAU].replace("'", "''"))
-                try:
-                    cursor.execute(cmd)
-                    r = cursor.fetchone()
-                    grau = r[0]
-                except:
-                    continue
-
-                # selecciona a referência do curso
-                #cmd = """SELECT designacao FROM cursos WHERE designacao = '{0}'""".\
-                cmd = """SELECT id_curso FROM cursos WHERE designacao = '{0}'""".\
-                    format(x[C_CURSO].replace("'", "''"))
-                try:
-                    cursor.execute(cmd)
-                    r = cursor.fetchone()
-                    curso = r[0]
-                except:
-                    continue
-
-                # selecciona a referência do docente
-                #cmd = """SELECT nome_completo FROM docentes where nome_completo = '{0}'""".\
-                cmd = """SELECT id_docente FROM docentes where nome_completo = '{0}'""".\
-                    format(x[C_DOCENTE].replace("'", "''"))
-                try:
-                    cursor.execute(cmd)
-                    r = cursor.fetchone()
-                    docente = r[0]
-                except:
-                    continue
-                
-                # valida se já está inserido na bd
-                cmd = """SELECT count(*) FROM fichas_curso 
-                        WHERE 
-                            ano = '{0}' and
-                            id_docente = '{1}' and
-                            id_grau = '{2}' and
-                            id_curso = '{3}'""".\
-                    format(x[C_ANO], 
-                           docente, 
-                           grau, 
-                           curso)
-                try:
-                    cursor.execute(cmd)
-                    inserido = r[0]
-                except:
-                    print cmd
-                    continue
-                pass
-
-                if inserido <= 0:                    
-                    # insere na base de dados
-                    cmd = """INSERT INTO fichas_curso 
-                             (ano, id_docente, id_grau, id_curso)
-                             VALUES 
-                             ('{0}','{1}','{2}','{3}') """.\
-                        format(x[C_ANO], 
-                               docente, 
-                               grau, 
-                               curso)
-                    try:
-                        #print cmd
-                        cursor.execute(cmd)
-                    except:
-                        continue
-                    pass
-                    
-                pass
-
-            
-            pass
-
-        print "Conclusão do preenchimento das fichas de curso"
-        conn.commit()
-        pass
-
+    #------------------------------
+    # Preenchimento das fichas de docenciatabelas gerais
+    #
+    #   lista       - lista de dados
+    #   conn        - conexão à base de dados
+    #   cursor      - curosr da base de dados
+    #------------------------------
     def preencher_fichas_docencia(self, lista, conn, cursor):
         C_CODIGO = 0
         C_DOCENTE = 1
@@ -314,71 +252,58 @@ class BaseDados:
         for linha in lista:
             for x in linha:
                 # selecciona a referência do docente
-                #cmd = """SELECT nome_completo FROM docentes WHERE nome_completo = '{0}'""".\
                 cmd = """SELECT id_docente FROM docentes WHERE nome_completo = '{0}'""".\
                     format(x[C_DOCENTE].replace("'", "''"))
                 try:
                     cursor.execute(cmd)
                     r = cursor.fetchone()
-                    #docente = r[0].encode('utf-8')
                     docente = r[0]
                 except:
                     continue
 
                 # selecciona a referência do estabelecimento
-##                cmd = """SELECT designacao FROM estabelecimentos 
-##                         WHERE designacao = '{0}'""".\
                 cmd = """SELECT id_estabelecimento FROM estabelecimentos 
                          WHERE designacao = '{0}'""".\
                     format(x[C_ESTABELECIMENTO].replace("'", "''"))
                 try:
                     cursor.execute(cmd)
                     r = cursor.fetchone()
-                    #estabelecimento = r[0].encode('utf-8')
                     estabelecimento = r[0]
                 except:
                     continue
 
                 # selecciona a referência da categoria
-                #cmd = """SELECT designacao FROM categorias WHERE designacao = '{0}'""".\
                 cmd = """SELECT id_categoria FROM categorias WHERE designacao = '{0}'""".\
                     format(x[C_CATEGORIA].replace("'", "''"))
                 try:
                     cursor.execute(cmd)
                     r = cursor.fetchone()
-                    #categoria = r[0].encode('utf-8')
                     categoria = r[0]
                 except:
                     continue
 
                 # selecciona a referência do regime
-                #cmd = """SELECT designacao FROM regimes WHERE designacao = '{0}'""".\
                 cmd = """SELECT id_regime FROM regimes WHERE designacao = '{0}'""".\
                     format(x[C_REGIME].replace("'", "''"))
                 try:
                     cursor.execute(cmd)
                     r = cursor.fetchone()
-                    #regime = r[0].encode('utf-8')
                     regime = r[0]
                 except:
                     continue
 
                 # selecciona a referência do tipo de estabelecimento
-                #cmd = """SELECT designacao FROM tipos_estabelecimento 
-                #         WHERE designacao = '{0}'""".\
                 cmd = """SELECT id_tipo_estabelecimento FROM tipos_estabelecimento 
                          WHERE designacao = '{0}'""".\
                     format(x[C_TIPO_ENSINO].replace("'", "''"))
                 try:
                     cursor.execute(cmd)
                     r = cursor.fetchone()
-                    #tipo_estabelecimento = r[0].encode('utf-8')
                     tipo_estabelecimento = r[0]
                 except:
                     continue
                 
                 # selecciona a referência do grau
-                #cmd = """SELECT designacao FROM graus WHERE designacao = '{0}'""".\
                 cmd = """SELECT id_grau FROM graus WHERE designacao = '{0}'""".\
                     format(x[C_GRAU].replace("'", "''"))
                 try:
@@ -389,7 +314,6 @@ class BaseDados:
                     continue
 
                 # selecciona a referência do curso
-                #cmd = """SELECT designacao FROM cursos WHERE designacao = '{0}'""".\
                 cmd = """SELECT id_curso FROM cursos WHERE designacao = '{0}'""".\
                     format(x[C_CURSO].replace("'", "''"))
                 try:
@@ -413,7 +337,6 @@ class BaseDados:
                          ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}') 
                       """.format(x[C_ANO], docente, estabelecimento, categoria, 
                                  regime, tipo_estabelecimento, grau, curso)
-                #print cmd
                          
                 try:
                     cursor.execute(cmd)
@@ -426,6 +349,11 @@ class BaseDados:
         conn.commit()
         pass
 
+    #------------------------------
+    # Preenchimento das tabelas gerais
+    #
+    #   ano - ano do preenchimento
+    #------------------------------
     def preencher_tabelas_gerais(self, ano):
         
         self.preencher_tipos_estabelecimento(ano)
@@ -468,13 +396,59 @@ class BaseDados:
         # preenchimento da informação de cada docente
         self.preencher_docentes(lista, conn, cursor)
 
-##        # preencher ficha de cursos
-##        self.preencher_fichas_curso(lista, conn, cursor)
-##        cursor.close()
-
         # preencher fichas docencia
         self.preencher_fichas_docencia(lista, conn, cursor)
         cursor.close()
 
         pass
+    
+    #------------------------------
+    # Inserção de uma list costumizada
+    #
+    #   title   - título da consulta
+    #   type    - tipo de consulta
+    #               0 - listas
+    #               1 - estatisticas
+    #
+    #   retorna o id da página
+    #------------------------------
+    def insert_custom_list(self, title, type):
+        #inicia variaveis
+        file_name = ''
+        
+        # cria conexão à bd
+        conn = sqlite3.connect('rebides.db')
+        cursor = conn.cursor()
+        
+        title = title.encode('utf-8').replace("'", "''")
+        
+        # adicionar comando
+        cmd = """INSERT INTO listas
+                    (titulo, tipo)
+                VALUES ('{0}',{1})""".\
+                format(\
+                    title,\
+                    type)
+
+        # executa o comando
+        try:
+            cursor.execute(cmd)
+            conn.commit()
+            
+            # valida o ID da página inserida
+            cmd = """SELECT MAX(ID) FROM listas"""
+            cursor.execute(cmd)
+            r = cursor.fetchall()
+            
+            # constroi o nome do ficheiro com base no ID
+            file_name = str(r[0][0]) + '.html'
+        except:
+            print "Erro:", cmd
+        pass
+        
+        cursor.close
+        
+        # retorna o nome do ficheiro
+        return file_name
+    pass
     
