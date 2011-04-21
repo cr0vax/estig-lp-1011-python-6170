@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import sqlite3
+from BaseDados import BaseDados
+
+#---------------------------------------
+# Classe responsável pelas operacoes de consultas à base de dados
+# Autor: Bruno Moreira
+# Número: 6170
+#---------------------------------------
 
 class Dados:
     
@@ -29,47 +36,20 @@ class Dados:
         pass
     pass
     
-    
-
-    #---------------------------------------
-    # Estatisticas sobre professores
-    #---------------------------------------    
-    def count_teachers(self, select, group_by):
-        
-        group_by = group_by.replace(" ", "")
-        group_by = group_by.replace(",", ",fd.")
-        
-        cmd = """SELECT 		{0}, COUNT(DISTINCT id_docente) AS TotalDocentes
-                 FROM		    Fichas_Docencia fd
-                    INNER JOIN estabelecimentos on
-                        estabelecimentos.id_estabelecimento = fd.id_estabelecimento
-                    INNER JOIN graus on
-                        graus.id_grau = fd.id_grau
-                 GROUP BY {1}""".\
-                    format(select,
-                           group_by)
-                
-        try:
-            self.cursor.execute(cmd)
-            
-            r = self.cursor.fetchall()
-            
-            return r
-            
-        except Exception, e:
-            print 'Got error %s' % e
-        pass
-    pass
-    
     #---------------------------------------
     # Estatisticas segundo os parametros passados
+    #
+    #   years       - anos a que se refere a estatistica
+    #   groupby     - campos pelos quais a estatistica deve ser agrupada
+    #   count       - o que deve ser contado
     #---------------------------------------    
-    def statistics(self, years, groupby, count):
+    def get_statistics(self, years, groupby, count):
         
         FD = 'fd.'
         
         sqlcount = FD + self.data_translator.get(count)[0]
-        sqlselect = self.data_translator.get(groupby[len(groupby)-1])[1]
+        #sqlselect = self.data_translator.get(groupby[len(groupby)-1])[1]
+        sqlselect = ','.join([str(FD + self.data_translator.get(i)[1]) for i in groupby])
         sqlgroupby = ','.join([str(FD + self.data_translator.get(i)[0]) for i in groupby])
         sqlwhere = ','.join([str(i) for i in years])
                 
@@ -104,6 +84,7 @@ class Dados:
             
             r = self.cursor.fetchall()
             
+            # retorna os dados
             return r
             
         except Exception, e:
@@ -114,12 +95,13 @@ class Dados:
     #---------------------------------------
     # TODO: Listas segundo os parametros passados
     #---------------------------------------    
-    def lists(self, select, where):
+    def get_lists(self, select, where):
         
         FD = 'fd.'
         
-        sqlselect = self.data_translator.get(groupby[len(groupby)-1])[1]
-        sqlwhere = ','.join([str(i) for i in where])
+        sqlselect = ','.join([str(FD + self.data_translator.get(i)[1]) for i in groupby])
+        sqlgroupby = ','.join([str(FD + self.data_translator.get(i)[0]) for i in groupby])
+        sqlwhere = ','.join([str(i) for i in years])
                 
         cmd = """SELECT
                     {0}
@@ -140,9 +122,11 @@ class Dados:
                  INNER JOIN docentes d on
                     fd.id_docente = d.id_docente
                  WHERE
-                    ano in ({1})""".\
+                    ano in ({2})
+                 GROUP BY {3}""".\
                     format(sqlselect,
-                           sqlwhere)
+                           sqlwhere,
+                           sqlgroupby)
                         
         try:
             self.cursor.execute(cmd)
@@ -156,8 +140,9 @@ class Dados:
         pass
     pass
     
-    # Get distinct years
-    # Retorna distinct years from database
+    #---------------------------------------
+    # Retorna os anos únicos da base de dados
+    #---------------------------------------
     def get_years(self):
         
         cmd = """
@@ -176,9 +161,11 @@ class Dados:
         
     pass
     
+    #---------------------------------------
     # Retorna os tipos de establecimento por ano
-    # year - ano para o qual vão ser retornados os tipos de establecimento
-    # Retorna array com os tipos de establecimento
+    #
+    #   year - ano para o qual vão ser retornados os tipos de establecimento
+    #---------------------------------------
     def get_establishment_types(self, year):
         
 ##        cmd = """
@@ -189,14 +176,14 @@ class Dados:
 ##            WHERE ano = {0}
 ##            """.format(year)
 
+        #TODO: apagar o debaixo e descomentar o de cima
         cmd = """
             SELECT DISTINCT e.designacao, fd.id_tipo_estabelecimento
             FROM fichas_docencia fd
                 INNER JOIN tipos_estabelecimento e on
                 fd.id_tipo_estabelecimento = e.id_tipo_estabelecimento
-            WHERE ano = {0} and fd.id_tipo_estabelecimento = 1
-            """.format(year)
-            
+            WHERE fd.id_tipo_estabelecimento = 1
+            """
         
         try:
             self.cursor.execute(cmd)
@@ -210,10 +197,12 @@ class Dados:
         
     pass
     
+    #---------------------------------------
     # Retorna os establecimentos por ano e por tipo
-    # year - ano para o qual vão ser retornados os establecimentos
-    # establishment - código do establecimento
-    # Retorna array com os tipos de establecimento
+    #
+    #   year          - ano para o qual vão ser retornados os establecimentos
+    #   establishment - código do establecimento
+    #---------------------------------------
     def get_establishments(self, year, establishment):
         
         cmd = """
@@ -236,10 +225,12 @@ class Dados:
         
     pass
     
-    # Retorna os establecimentos por ano e por tipo
-    # year - ano para o qual vão ser retornados os establecimentos
-    # establishment - código do establecimento
-    # Retorna array com os tipos de establecimento
+    #---------------------------------------
+    # Retorna os docentes por ano e estabelecimento
+    #
+    #   year          - ano para o qual vão ser retornados os docentes
+    #   establishment - código do establecimento
+    #---------------------------------------
     def get_teachers(self, year, establishment):
         
         cmd = """
@@ -274,3 +265,33 @@ class Dados:
         pass
         
     pass
+    
+    #---------------------------------------
+    # Pesquisa na base de dados as últimas 20 páginas do tipo desejado
+    #
+    #   type          - ano para o qual vão ser retornados os docentes
+    #
+    #   retorna um array com as páginas
+    #---------------------------------------
+    def get_pages(self, type):
+        
+        cmd = """
+            SELECT * 
+            FROM listas 
+            WHERE tipo = {0}
+            ORDER BY id
+            LIMIT 20
+            """.format(type)
+        
+        try:
+            self.cursor.execute(cmd)
+            r = self.cursor.fetchall()
+            
+            return r
+            
+        except Exception, e:
+            print 'An error ocurred while trying to fetch pages %s' % e
+        pass
+        
+    pass
+    

@@ -1,11 +1,4 @@
 # -*- coding: utf-8 -*-
-'''
-projecto- classe destinada a leitura da informação no sistema rebides
-autor- Jose Jasnau Caeiro
-data de criação do módulo- 7/03/2011
-observações-
-
-'''
 
 # processamento de HTML através do parser BeautifulSoup
 from BeautifulSoup import BeautifulSoup
@@ -14,6 +7,12 @@ import re
 # biblioteca para acesso através de protocolos de Internet
 import urllib2
 
+#---------------------------------------
+# Classe responsável pela obtenção de dados online
+# Autor: Jose Jasnau Caeiro
+# Alterações: Bruno Moreira
+# Número: 6170
+#---------------------------------------
 class ObterDados:
     
     def obter_codigos_tipo_estabelecimento(self, ano):

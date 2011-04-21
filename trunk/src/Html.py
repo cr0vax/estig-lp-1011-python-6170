@@ -4,9 +4,12 @@ from Dados import Dados
 import shutil
 import os
 
-"""
-Classe para gerar as páginas HTML
-"""
+#---------------------------------------
+# Classe responsável por gerar páginas HTML
+# Autor: Bruno Moreira
+# Número: 6170
+#---------------------------------------
+
 class Html:
     
     HEADER_COLOR = '#99CCFF'
@@ -23,35 +26,119 @@ class Html:
         pass
     pass
     
+    #---------------------------------------
     # cria as páginas para um determinado ano
-    def create_pages(self):
-        print "create_pages"
+    #---------------------------------------
+    def create_index(self):
+        print "Started creating pages"
 
-        # cria a página com o índice por ano
-        self.create_years_page(self.years)
-        pass
-    pass
-    
-    # cria página dos anos
-    # years - array com os anos
-    def create_years_page(self, years):
-        
-        # cria o ficheiro com a lista dos anos
+        # cria o ficheiro com o índice
         file = open('index.html',"wb")
-
+        
         # inicia a página
         file.write('<html>')        # start html
         file.write('<body>')        # start body
-        
         file.write('<table>')       # start table
+
+        # Adiciona o índíce por ano
+        self.add_years_to_index(self.years, file)
+        
+        # Adiciona as estatisticas
+        self.add_statistics_to_index(file)
+        
+        # Adiciona as listas
+        self.add_lists_to_index(file)
+        
+        # termina a página
+        file.write('</html>')        # close html
+        file.write('</body>')        # close body
+        file.write('</table>')       # close table
+
+        print "Finished creating pages"
+        pass
+    pass
+    
+    
+    #---------------------------------------
+    # Adiciona as estatísticas ao índice
+    #
+    #   file    - ficheiro onde serão inseridos os dados
+    #---------------------------------------
+    def add_statistics_to_index(self, file):
+
+        # definição de variaveis
+        BASE_URL = 'html/statistics'
+        
+        # adiciona o título
+        file.write('<tr bgcolor={0}><td>\
+            Últimas 20 estatisticas geradas na aplicação</td></tr>'.\
+            format(self.HEADER_COLOR))
+                
+        # selecciona as estatisticas da base de dados
+        bd = Dados()
+        pages = bd.get_pages(1)
+        
+        #escreve as estatisticas da base de dados
+        for page in pages:
+            page_url = BASE_URL + '/' + str(page[0]) + '.html'
+            page_title = page[1]
             
+            file.write('<tr><td><a href={0}>{1}</a></td></tr>'.\
+                            format(page_url,page_title))
+        pass
+    pass
+    
+    #---------------------------------------
+    # Adiciona as listas ao índice
+    #
+    #   file    - ficheiro onde serão inseridos os dados
+    #---------------------------------------
+    def add_lists_to_index(self, file):
+
+        # definição de variaveis
+        BASE_URL = 'html/lists'
+        
+        # adiciona o título
+        file.write('<tr bgcolor={0}><td>\
+            Últimas 20 listas geradas na aplicação</td></tr>'.\
+            format(self.HEADER_COLOR))
+                
+        # selecciona as listas da base de dados
+        bd = Dados()
+        pages = bd.get_pages(0)
+        
+        # escreve as listas da base de dados
+        for page in pages:
+            page_url = BASE_URL + '/' + str(page[0]) + '.html'
+            page_title = page[1]
+            
+            file.write('<tr><td><a href={0}>{1}</a></td></tr>'.\
+                            format(page_url,page_title))
+        pass
+    pass
+    
+    #---------------------------------------
+    # Adiciona os anos ao índice
+    #
+    #   years   - array com os anos
+    #   file    - ficheiro onde serão inseridos os dados
+    #---------------------------------------
+    def add_years_to_index(self, years, file):
+        
+        # adiciona o título
+        file.write('<tr bgcolor={0}><td>\
+            Anos disponíveis na BD Rebides</td></tr>'.\
+            format(self.HEADER_COLOR))
+        
+        # Adiciona os anos
         for year in years:
             file.write('<tr>')
             file.write('<td><a href="html/200{0}">Ano 200{1}</a></td>'.format(year, year))
             file.write('</tr>')
 
             # cria as restantes páginas do ano
-            self.create_pages_for_year(year)
+            #TODO: descomentar
+            #self.create_pages_for_year(year)
             pass
         pass
         
@@ -60,8 +147,11 @@ class Html:
         pass
     pass
 
+    #---------------------------------------
     # cria as páginas de um determinado ano
-    # year - ano para o qual vão ser criadas as páginas
+    #
+    #   year - ano para o qual vão ser criadas as páginas
+    #---------------------------------------
     def create_pages_for_year(self, year):
         path = 'html/200{0}'.format(year)        
         # elimina a pasta do ano
@@ -81,9 +171,13 @@ class Html:
         pass
     pass
     
+    #---------------------------------------
     # cria páginas dos tipos de estabelecimento
-    # year  - ano dos dados
-    # path  - caminho onde deve ficar a página
+    #
+    #   descriptive_path          - caminho em texto para a página
+    #   path                      - caminho para a página
+    #   year                      - ano da página a ser criado
+    #---------------------------------------
     def create_establishment_type_pages(self, descriptive_path, path, year):
         
         # recolhe os dados
@@ -129,10 +223,14 @@ class Html:
         pass
     pass
     
+    #---------------------------------------
     # cria páginas dos estabelecimentos
-    # path                      - caminho para o tipo de estabelecimento
-    # year                      - ano da página a ser criado
-    # establishment_type_code   - código do tipo de estabelecimento
+    #
+    #   descriptive_path          - caminho em texto para a página
+    #   path                      - caminho para a página
+    #   year                      - ano da página a ser criado
+    #   establishment_type_code   - código do tipo de estabelecimento
+    #---------------------------------------
     def create_establishment_pages(self, descriptive_path, path, year, establishment_type_code):
         
         establishements = \
@@ -176,11 +274,16 @@ class Html:
         pass
     pass
     
+    #---------------------------------------
     # cria páginas dos docentes de cada estabelecimento
-    # year  - ano da página a ser criado
+    #
+    #   descriptive_path    - caminho em texto para a página
+    #   path                - caminho para a página
+    #   year                - ano da página a ser criado
+    #   establishment       - o estabelecimento a que pertencem os docentes
+    #---------------------------------------
     def create_teacher_pages(self, descriptive_path, path, year, establishment):
-        print "create_teachers_page"
-        
+
         teachers = self.dados.get_teachers(year, establishment)
         file = open(path + '/index.html',"wb")
         
@@ -236,15 +339,63 @@ class Html:
         pass
     pass
     
+    #---------------------------------------
+    # Cria uma página de estatisticas
+    #
+    #   title       - título da estatistica
+    #   data        - dados para construir a página
+    #   column_names- nomes das colunas das estatisticas
+    #   file_name   - nome do ficheiro a ser criado
+    #---------------------------------------
+    def create_statistics_page(self, title, data, column_names, file_name):
+        
+        # cria a pasta das estatisticas
+        path = 'html/statistics'
+        if not os.path.isdir(path):
+            os.makedirs(path)
+        pass
+        
+        #cria o ficheiro
+        file = open(path + '/' + file_name,"wb")
+                
+        # escreve o caminho da página
+        descriptive_path = 'Rebides/' + title
+
+        # inicia a página
+        column_names.append('Total')
+        print "Column Names:", column_names
+        self.start_page(file, descriptive_path, path, column_names)
+        
+        # adiciona conteúdo
+        for row in data:
+            file.write('<tr>')
+            for column in row:
+                try:
+                    encoded_column = column.encode('utf-8')
+                    file.write('<td>{0}</td>'.format(encoded_column))
+                except:
+                    file.write('<td>{0}</td>'.format(column))
+                    continue
+                pass
+            pass
+            file.write('</tr>')
+        pass
+        
+        # conclui a página
+        self.end_page(file, descriptive_path, path)
+    pass
     
+    
+    #---------------------------------------
     # Inicia uma página baseada em tabelas e adiciona-lhe o cabeçlho
     #
     #   file                - o fichiero onde escrever
     #   descriptive_path    - o caminho em texto para o ficheiro
     #   path                - o caminho do ficheiro
     #   column_names        - os nomes das colunas a serem adicionados
+    #---------------------------------------
     def start_page(self, file, descriptive_path, path, column_names):
-
+        
         # escreve o caminho da página
         self.page_path(file, descriptive_path, path)
         
@@ -267,11 +418,13 @@ class Html:
         
     pass
     
+    #---------------------------------------
     # Termina uma página baseada em tabelas e adiciona-lhe o caminho
     #
     #   file                - o fichiero onde escrever
     #   descriptive_path    - o caminho em texto para o ficheiro
     #   path                - o caminho do ficheiro
+    #---------------------------------------
     def end_page(self, file, descriptive_path, path):
         
         # termina a página
@@ -284,20 +437,26 @@ class Html:
         self.page_path(file, descriptive_path, path)
     pass
     
+    #---------------------------------------
     # Escreve a path da página
     #
-    #   file        - ficheiro onde escrever
-    #   path        - caminho a escrever
+    #   file                      - ficheiro onde escrever
+    #   descriptive_path          - caminho em texto para a página
+    #   path                      - caminho para a página
+    #---------------------------------------
     def page_path(self, file, descriptive_path, path):
         
         # divide o caminho
         splitted_path = path.split('/')
         descriptions = descriptive_path.split('/')
+        print splitted_path
+        print descriptions
         
         # relaciona o caminho com a root
         folder_path = ''
         for x in range(len(splitted_path) + 1):
             folder_path = folder_path + '../'
+        print folder_path
             
         # escreve o primeiro caminho à parte porque a root
         # não é a pasta html, mas o servidor em sí

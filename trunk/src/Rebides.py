@@ -8,24 +8,6 @@ from Main import Main
 # begin wxGlade: extracode
 # end wxGlade
 
-
-
-class MyGraphs(wx.MDIChildFrame):
-    def __init__(self, *args, **kwds):
-        # content of this block not found: did you rename this class?
-        pass
-
-    def __set_properties(self):
-        # content of this block not found: did you rename this class?
-        pass
-
-    def __do_layout(self):
-        # content of this block not found: did you rename this class?
-        pass
-
-# end of class MyGraphs
-
-
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         # iniciar ligação ao código aplicacional
@@ -34,10 +16,10 @@ class MyFrame(wx.Frame):
         # begin wxGlade: MyFrame.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
-        self.pane_general = wx.Notebook(self, -1, style=wx.NB_RIGHT)
-        self.pane_statistics = wx.Panel(self.pane_general, -1)
+        self.pane_statistics = wx.Panel(self, -1)
         self.sizer_5_staticbox = wx.StaticBox(self.pane_statistics, -1, "Group by")
         self.sizer_6_staticbox = wx.StaticBox(self.pane_statistics, -1, "Count")
+        self.sizer_7_staticbox = wx.StaticBox(self.pane_statistics, -1, "Options")
         self.sizer_4_staticbox = wx.StaticBox(self.pane_statistics, -1, "Years")
         
         # Menu Bar
@@ -121,6 +103,8 @@ class MyFrame(wx.Frame):
         self.chk_gb_system = wx.CheckBox(self.pane_statistics, -1, "System")
         self.radio_box_1 = wx.RadioBox(self.pane_statistics, -1, "", choices=["Teacher", "Establishment", "Category", "System", "Establishment Type", "Grade", "Course"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
         self.btn_statistics = wx.Button(self.pane_statistics, -1, "Generate Statistics")
+        self.btn_csv = wx.Button(self.pane_statistics, -1, "Generate CSV")
+        self.btn_list = wx.Button(self.pane_statistics, -1, "Generate List")
 
         self.__set_properties()
         self.__do_layout()
@@ -152,7 +136,6 @@ class MyFrame(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("Rebides")
-        self.SetSize((825, 549))
         self.Rebides_statusbar.SetStatusWidths([825])
         # statusbar fields
         Rebides_statusbar_fields = ["Ready"]
@@ -167,6 +150,8 @@ class MyFrame(wx.Frame):
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
         sizer_2 = wx.BoxSizer(wx.VERTICAL)
         sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_7 = wx.StaticBoxSizer(self.sizer_7_staticbox, wx.VERTICAL)
+        sizer_8 = wx.BoxSizer(wx.VERTICAL)
         sizer_6 = wx.StaticBoxSizer(self.sizer_6_staticbox, wx.VERTICAL)
         sizer_5 = wx.StaticBoxSizer(self.sizer_5_staticbox, wx.VERTICAL)
         sizer_4 = wx.StaticBoxSizer(self.sizer_4_staticbox, wx.VERTICAL)
@@ -192,12 +177,16 @@ class MyFrame(wx.Frame):
         sizer_3.Add(sizer_5, 1, wx.EXPAND, 0)
         sizer_6.Add(self.radio_box_1, 0, 0, 0)
         sizer_3.Add(sizer_6, 1, wx.EXPAND, 0)
+        sizer_8.Add(self.btn_statistics, 0, wx.EXPAND, 0)
+        sizer_8.Add(self.btn_csv, 0, wx.EXPAND, 0)
+        sizer_8.Add(self.btn_list, 0, wx.EXPAND, 0)
+        sizer_7.Add(sizer_8, 1, wx.EXPAND, 0)
+        sizer_3.Add(sizer_7, 1, wx.EXPAND, 0)
         sizer_2.Add(sizer_3, 1, wx.EXPAND, 0)
-        sizer_2.Add(self.btn_statistics, 0, wx.EXPAND, 0)
         self.pane_statistics.SetSizer(sizer_2)
-        self.pane_general.AddPage(self.pane_statistics, "Statistics")
-        sizer_1.Add(self.pane_general, 1, wx.EXPAND, 0)
+        sizer_1.Add(self.pane_statistics, 0, wx.EXPAND, 0)
         self.SetSizer(sizer_1)
+        sizer_1.Fit(self)
         self.Layout()
         # end wxGlade
 
@@ -310,7 +299,17 @@ class MyFrame(wx.Frame):
 
     def evt_start_server(self, event): # wxGlade: MyFrame.<event_handler>
         self.set_status_bar_ready(False)
-        self.main.http_start_server()
+        
+        # perguntar se querem gerar as páginas HTML
+        dial = wx.MessageDialog(None,\
+            'Do you wish to generate HTML pages?', 'HTML',
+            wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+        ret = dial.ShowModal()
+        if ret == wx.ID_YES:
+            self.main.http_start_server(True)
+        else:
+            self.main.http_start_server(False)
+        pass
         self.set_status_bar_ready(True)
         event.Skip()
 
