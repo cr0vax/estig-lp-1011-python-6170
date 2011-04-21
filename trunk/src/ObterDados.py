@@ -187,14 +187,13 @@ class ObterDados:
             ficheiro = urllib2.urlopen( url )
         except:
             print "ERRO DE CONEXAO", url
-            pass
+        pass
 
         try:
             # leitura dos dados da pagina
             dados = ficheiro.read()
         except:
             print "ERRO de LEITURA"
-            pass
         else:
             ficheiro.close()
 

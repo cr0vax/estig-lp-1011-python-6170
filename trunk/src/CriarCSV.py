@@ -5,27 +5,47 @@ import csv
 
 class CriarCSV:
     
-    def escrita_csv(self, ano):
-        '''
-        escrita dos dados em ficheiro csv
-        '''
-        ficheiro = open('reb{0}.csv'.format(ano),"wb")
+    #----------------------------
+    # Escreve informação no formato CSV
+    #
+    #   title       - título do CSV
+    #   csv_name    - nome do csv
+    #   data        - data a ser inserida no CSV
+    #----------------------------
+    def escrita_csv(self, title, csv_name, data):
+        print "escrita csv"
+        CSV_PATH = 'csv/'
+        
+        ficheiro = open(CSV_PATH + csv_name + '.csv',"wb")
         csvwriter = csv.writer( ficheiro, delimiter=',')
 
-        print "ANO: 200{0}".format(ano)
-        d_tipos_estabelecimento = obter_codigos_tipo_estabelecimento(ano)
+        # escrever título
+        csvwriter.writerow(('----------------------------------------------',))
+        csvwriter.writerow((title.encode('utf-8'),))
+        csvwriter.writerow(('----------------------------------------------',))
+                
+        # escreve o conteúdo
+        for row in data:
+            encoded_row = []
+            i = 0
+            for column in row:
 
-        for tipo, codR in d_tipos_estabelecimento.iteritems():
-            print tipo, ' ', codR
-            d_estabelecimentos = \
-                obter_codigos_estabelecimentos(ano, codR)
-            for estabelecimento, codP in d_estabelecimentos.iteritems():
-                ld = obter_informacao_docentes(ano, tipo, 
-                                               codR, estabelecimento, codP)
-
-                for x in ld:
-                    csvwriter.writerow(x)
+                try:
+                    encoded_column = column.encode('utf-8')
+                    encoded_row.append(encoded_column)
+                except:
+                    encoded_column = str(column)
+                    encoded_row.append(encoded_column)
+                    continue
                 pass
+
+                
             pass
-        ficheiro.close()
+
+            csvwriter.writerow(encoded_row)
         pass
+
+        # fecha o ficheiro
+        ficheiro.close()
+    pass
+    

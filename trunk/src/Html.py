@@ -67,11 +67,13 @@ class Html:
     def add_statistics_to_index(self, file):
 
         # definição de variaveis
-        BASE_URL = 'html/custom'
+        URL_HTML = 'html/custom'
+        URL_CSV =  'csv'
         
         # adiciona o título
-        file.write('<tr bgcolor={0}><td>\
-            Últimas 20 estatisticas geradas na aplicação</td></tr>'.\
+        file.write('<tr bgcolor={0}>\
+            <td>Últimas 20 estatisticas geradas na aplicação</td>\
+            <td>CSV</td></tr>'.\
             format(self.HEADER_COLOR))
                 
         # selecciona as estatisticas da base de dados
@@ -80,11 +82,14 @@ class Html:
         
         #escreve as estatisticas da base de dados
         for page in pages:
-            page_url = BASE_URL + '/' + str(page[0]) + '.html'
+            page_url = URL_HTML + '/' + str(page[0]) + '.html'
+            csv_url  = URL_CSV + '/' + str(page[0]) + '.csv'
             page_title = page[1]
             
-            file.write('<tr><td><a href={0}>{1}</a></td></tr>'.\
-                            format(page_url,page_title))
+            file.write('<tr>\
+                <td><a href={0}>{1}</a></td>\
+                <td><a href={2}>abrir</a></td></tr>'.\
+                            format(page_url, page_title, csv_url))
         pass
     pass
     
@@ -96,24 +101,29 @@ class Html:
     def add_lists_to_index(self, file):
 
         # definição de variaveis
-        BASE_URL = 'html/custom'
+        URL_HTML = 'html/custom'
+        URL_CSV =  'csv'
         
         # adiciona o título
         file.write('<tr bgcolor={0}><td>\
-            Últimas 20 listas geradas na aplicação</td></tr>'.\
+            Últimas 20 listas geradas na aplicação</td>\
+            <td>CSV</td></tr></tr>'.\
             format(self.HEADER_COLOR))
                 
         # selecciona as listas da base de dados
         bd = Dados()
         pages = bd.get_pages(0)
         
-        # escreve as listas da base de dados
+        #escreve as estatisticas da base de dados
         for page in pages:
-            page_url = BASE_URL + '/' + str(page[0]) + '.html'
+            page_url = URL_HTML + '/' + str(page[0]) + '.html'
+            csv_url  = URL_CSV + '/' + str(page[0]) + '.csv'
             page_title = page[1]
             
-            file.write('<tr><td><a href={0}>{1}</a></td></tr>'.\
-                            format(page_url,page_title))
+            file.write('<tr>\
+                <td><a href={0}>{1}</a></td>\
+                <td><a href={2}>abrir</a></td></tr>'.\
+                            format(page_url, page_title, csv_url))
         pass
     pass
     
@@ -356,14 +366,13 @@ class Html:
         pass
         
         #cria o ficheiro
-        file = open(path + '/' + file_name,"wb")
+        file = open(path + '/' + file_name + '.html',"wb")
                 
         # escreve o caminho da página
         descriptive_path = 'Rebides/' + title
 
         # inicia a página
         column_names.append('Total')
-        print "Column Names:", column_names
         self.start_page(file, descriptive_path, path, column_names)
         
         # adiciona conteúdo
@@ -402,13 +411,12 @@ class Html:
         pass
         
         #cria o ficheiro
-        file = open(path + '/' + file_name,"wb")
+        file = open(path + '/' + file_name + '.html',"wb")
                 
         # escreve o caminho da página
         descriptive_path = 'Rebides/' + title
 
         # inicia a página
-        print "Column Names:", column_names
         self.start_page(file, descriptive_path, path, column_names)
         
         # adiciona conteúdo
@@ -497,8 +505,6 @@ class Html:
         # divide o caminho
         splitted_path = path.split('/')
         descriptions = descriptive_path.split('/')
-        print splitted_path
-        print descriptions
         
         # relaciona o caminho com a root
         folder_path = ''

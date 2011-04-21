@@ -5,6 +5,7 @@ from Dados import Dados
 from HttpServer import HttpServer
 from Graphs import Graphs
 from Html import Html
+from CriarCSV import CriarCSV
 
 #---------------------------------------
 # Classe responsável pela ponta da GUI à camada aplicacional
@@ -29,34 +30,6 @@ class Main:
         pass
     pass    
     
-    
-    #---------------------------------------
-    # Define os parametros para consultar na BD
-    # as stats relativas aos professores
-    #
-    #   which_stat - 
-    def get_teacher_stats(self, which_stat):
-        st = Dados()
-        
-        consultas = {
-            'tnotithespy'   : ["ano", "ano", "Total number of teachers in the higher education system per year"],
-            'tnotpiapy'     : ["ano, estabelecimentos.designacao", "ano, id_estabelecimento", "Total number of teachers per institution and per year"],
-            'tnotpdapy'     : ["ano, graus.designacao", "ano, id_grau", "Total number of teachers per degree and per year"],
-            'tnotpdpeapy'   : ["ano, estabelecimentos.designacao, graus.designacao", "ano, id_estabelecimento, id_grau", "Total number of teachers per degree, per establishment and per year"]
-        }
-        
-        # valida quais os parametros para a stat escolhida
-        #select, group_by = consultas[which_stat]()
-        select, group_by, title = consultas.get(which_stat)
-        
-        # retorna os dados da consulta efectuada
-        data = st.count_teachers(select, group_by)
-        
-        return data, title
-    
-        pass
-    pass
-
     #---------------------------------
     # Constroi as estatisticas
     #
@@ -74,7 +47,7 @@ class Main:
         filtered_groupby = self.filter_active(groupby)
         
         # constroi o título a dar ao gráfico
-        title = """Total number of {0} for years {1} groupped by {2}""".\
+        title = """Total number of {0} for years {1} grouped by {2}""".\
                     format(count + 's',
                            ','.join(['200' + str(i) for i in filtered_years]),
                            ','.join([str(i) for i in filtered_groupby]))
@@ -89,6 +62,10 @@ class Main:
         # Cria a página HTML com a estatistica
         html = Html()
         html.create_statistics_page(title, data, filtered_groupby, file_name)
+        
+        # cria o ficheiro CSV
+        csv = CriarCSV()
+        csv.escrita_csv(title, file_name, data)
             
         # gera o gráfico
         graph = Graphs(data, title)
@@ -123,20 +100,9 @@ class Main:
     #---------------------------
     # Menu estatisticas
     #---------------------------
-    def make_teachers_graph(self, which_stat):
-        
-        # trata os dados
-        data, title = self.get_teacher_stats(which_stat)
-        
-        # gera gráfico com os dados
-        graph = Graphs(data, title)
-        
-        pass
-    pass
     
     def get_lists(self, select, years):
-        bd = Dados()
-        
+        print "get_lists"
         # transforma os elementos de years activos em string
         filtered_years = self.filter_active(years)
 
@@ -149,13 +115,16 @@ class Main:
                            ','.join(['200' + str(i) for i in filtered_years]))
         
         # retorna os dados da base de dados
+        bd = Dados()
         data = bd.get_lists(filtered_select, filtered_years)
-        
-        print data
         
         # adiciona a página à bd
         db = BaseDados()
         file_name = db.insert_custom_list(title, 0)
+        
+        # cria o ficheiro CSV
+        csv = CriarCSV()
+        csv.escrita_csv(title, file_name, data)
         
         # Cria a página HTML com a estatistica
         html = Html()
