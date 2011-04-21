@@ -99,8 +99,6 @@ class Dados:
         
         FD = 'fd.'
         
-        print "get_lists(select):", select
-        print "get_lists(where):", where
         sqlselect = ','.join([str(FD + self.data_translator.get(i)[1]) for i in select])
         sqlwhere = ','.join([str(i) for i in where])
                 

@@ -28,7 +28,6 @@ class Graphs:
         FONT_SIZE = 10                  # tamanho da fonte
         
         for row in data:
-            print row
             x.append(row[0])
             y.append(row[len(row)-1])
             xlabel.append(row[len(row)-2])

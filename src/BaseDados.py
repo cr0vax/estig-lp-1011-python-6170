@@ -426,8 +426,8 @@ class BaseDados:
         cmd = """INSERT INTO listas
                     (titulo, tipo)
                 VALUES ('{0}',{1})""".\
-                format(\
-                    title,\
+                format(
+                    title,
                     type)
 
         # executa o comando
@@ -441,7 +441,7 @@ class BaseDados:
             r = cursor.fetchall()
             
             # constroi o nome do ficheiro com base no ID
-            file_name = str(r[0][0]) + '.html'
+            file_name = str(r[0][0])
         except:
             print "Erro:", cmd
         pass
