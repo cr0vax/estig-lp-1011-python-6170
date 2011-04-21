@@ -2,6 +2,7 @@
 
 # escrita em csv
 import csv
+import os
 
 class CriarCSV:
     
@@ -15,6 +16,13 @@ class CriarCSV:
     def escrita_csv(self, title, csv_name, data):
         print "escrita csv"
         CSV_PATH = 'csv/'
+        
+        # cria pasta
+        try:
+            os.makedirs(CSV_PATH)
+        except:
+            print "O directório já existe"
+        pass
         
         ficheiro = open(CSV_PATH + csv_name + '.csv',"wb")
         csvwriter = csv.writer( ficheiro, delimiter=',')
