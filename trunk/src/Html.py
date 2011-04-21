@@ -147,8 +147,7 @@ class Html:
             file.write('</tr>')
 
             # cria as restantes páginas do ano
-            #TODO: descomentar
-            #self.create_pages_for_year(year)
+            self.create_pages_for_year(year)
             pass
         pass
         
