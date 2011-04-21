@@ -93,7 +93,7 @@ class Dados:
     pass
     
     #---------------------------------------
-    # TODO: Listas segundo os parametros passados
+    # Listas segundo os parametros passados
     #---------------------------------------    
     def get_lists(self, select, where):
         
@@ -165,23 +165,14 @@ class Dados:
     #---------------------------------------
     def get_establishment_types(self, year):
         
-##        cmd = """
-##            SELECT DISTINCT e.designacao, fd.id_tipo_estabelecimento
-##            FROM fichas_docencia fd
-##                INNER JOIN tipos_estabelecimento e on
-##                fd.id_tipo_estabelecimento = e.id_tipo_estabelecimento
-##            WHERE ano = {0}
-##            """.format(year)
-
-        #TODO: apagar o debaixo e descomentar o de cima
         cmd = """
             SELECT DISTINCT e.designacao, fd.id_tipo_estabelecimento
             FROM fichas_docencia fd
                 INNER JOIN tipos_estabelecimento e on
                 fd.id_tipo_estabelecimento = e.id_tipo_estabelecimento
-            WHERE fd.id_tipo_estabelecimento = 1
-            """
-        
+            WHERE ano = {0}
+            """.format(year)
+
         try:
             self.cursor.execute(cmd)
             r = self.cursor.fetchall()

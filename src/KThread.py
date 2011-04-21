@@ -6,7 +6,7 @@
 #
 #---------------------------------------------------------------------
 # KThread.py: A killable Thread implementation.
-#
+# Source: http://www.velocityreviews.com/forums/t330554-kill-a-thread-in-python.html
 #---------------------------------------------------------------------
 
 import sys
