@@ -134,8 +134,32 @@ class Main:
         pass
     pass
     
-    def get_lists(self):
-        lists(self, select, where)
+    def get_lists(self, select, years):
+        bd = Dados()
+        
+        # transforma os elementos de years activos em string
+        filtered_years = self.filter_active(years)
+
+        # transforma os elementos de groupby activos em string
+        filtered_select = self.filter_active(select)
+        
+        # constroi o título a dar à lista
+        title = """List of {0} for years {1}""".\
+                    format(','.join([str(i) for i in filtered_select]),
+                           ','.join(['200' + str(i) for i in filtered_years]))
+        
+        # retorna os dados da base de dados
+        data = bd.get_lists(filtered_select, filtered_years)
+        
+        print data
+        
+        # adiciona a página à bd
+        db = BaseDados()
+        file_name = db.insert_custom_list(title, 0)
+        
+        # Cria a página HTML com a estatistica
+        html = Html()
+        html.create_lists_page(title, data, filtered_select, file_name)
         pass
     pass
     
