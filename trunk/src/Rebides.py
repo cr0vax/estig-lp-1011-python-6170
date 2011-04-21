@@ -54,26 +54,6 @@ class MyFrame(wx.Frame):
         self.CollectAll = wx.MenuItem(self.Data, wx.NewId(), "Collect All", "", wx.ITEM_NORMAL)
         self.Data.AppendItem(self.CollectAll)
         self.Rebides_menubar.Append(self.Data, "Data")
-        self.Statistics = wx.Menu()
-        Counters = wx.Menu()
-        self.tnotithespy = wx.MenuItem(Counters, wx.NewId(), "Total number of teachers in the higher education system per year", "Total number of teachers in the higher education system per year", wx.ITEM_NORMAL)
-        Counters.AppendItem(self.tnotithespy)
-        self.tnotpiapy = wx.MenuItem(Counters, wx.NewId(), "Total number of teachers per institution and per year", "", wx.ITEM_NORMAL)
-        Counters.AppendItem(self.tnotpiapy)
-        self.tnotpdapy = wx.MenuItem(Counters, wx.NewId(), "Total number of teachers per degree and per year", "", wx.ITEM_NORMAL)
-        Counters.AppendItem(self.tnotpdapy)
-        self.tnotpdpeapy = wx.MenuItem(Counters, wx.NewId(), "Total number of teachers per degree, per establishment and per year", "", wx.ITEM_NORMAL)
-        Counters.AppendItem(self.tnotpdpeapy)
-        self.Statistics.AppendMenu(wx.NewId(), "Counters", Counters, "")
-        Lists = wx.Menu()
-        self.loipy = wx.MenuItem(Lists, wx.NewId(), "List of institutions per year", "", wx.ITEM_NORMAL)
-        Lists.AppendItem(self.loipy)
-        self.loiepy = wx.MenuItem(Lists, wx.NewId(), "List of institutions/establishments per year", "", wx.ITEM_NORMAL)
-        Lists.AppendItem(self.loiepy)
-        self.lohoadpy = wx.MenuItem(Lists, wx.NewId(), "List of holders of a degree per year", "", wx.ITEM_NORMAL)
-        Lists.AppendItem(self.lohoadpy)
-        self.Statistics.AppendMenu(wx.NewId(), "Lists", Lists, "")
-        self.Rebides_menubar.Append(self.Statistics, "Statistics")
         self.Http = wx.Menu()
         self.StartServer = wx.MenuItem(self.Http, wx.NewId(), "Start Server", "", wx.ITEM_NORMAL)
         self.Http.AppendItem(self.StartServer)
@@ -103,7 +83,6 @@ class MyFrame(wx.Frame):
         self.chk_gb_system = wx.CheckBox(self.pane_statistics, -1, "System")
         self.radio_box_1 = wx.RadioBox(self.pane_statistics, -1, "", choices=["Teacher", "Establishment", "Category", "System", "Establishment Type", "Grade", "Course"], majorDimension=0, style=wx.RA_SPECIFY_ROWS)
         self.btn_statistics = wx.Button(self.pane_statistics, -1, "Generate Statistics")
-        self.btn_csv = wx.Button(self.pane_statistics, -1, "Generate CSV")
         self.btn_list = wx.Button(self.pane_statistics, -1, "Generate List")
 
         self.__set_properties()
@@ -121,16 +100,10 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.evt_collect_2008, self.Collect2008)
         self.Bind(wx.EVT_MENU, self.evt_collect_2009, self.Collect2009)
         self.Bind(wx.EVT_MENU, self.evt_collect_all, self.CollectAll)
-        self.Bind(wx.EVT_MENU, self.evt_tnotithespy, self.tnotithespy)
-        self.Bind(wx.EVT_MENU, self.evt_tnotpiapy, self.tnotpiapy)
-        self.Bind(wx.EVT_MENU, self.evt_tnotpdapy, self.tnotpdapy)
-        self.Bind(wx.EVT_MENU, self.evt_tnotpdpeapy, self.tnotpdpeapy)
-        self.Bind(wx.EVT_MENU, self.evt_loipy, self.loipy)
-        self.Bind(wx.EVT_MENU, self.evt_loiepy, self.loiepy)
-        self.Bind(wx.EVT_MENU, self.evt_lohoadpy, self.lohoadpy)
         self.Bind(wx.EVT_MENU, self.evt_start_server, self.StartServer)
         self.Bind(wx.EVT_MENU, self.evt_stop_server, self.StopServer)
         self.Bind(wx.EVT_BUTTON, self.evt_generate_statistics, self.btn_statistics)
+        self.Bind(wx.EVT_BUTTON, self.evt_generate_lists, self.btn_list)
         # end wxGlade
 
     def __set_properties(self):
@@ -178,7 +151,6 @@ class MyFrame(wx.Frame):
         sizer_6.Add(self.radio_box_1, 0, 0, 0)
         sizer_3.Add(sizer_6, 1, wx.EXPAND, 0)
         sizer_8.Add(self.btn_statistics, 0, wx.EXPAND, 0)
-        sizer_8.Add(self.btn_csv, 0, wx.EXPAND, 0)
         sizer_8.Add(self.btn_list, 0, wx.EXPAND, 0)
         sizer_7.Add(sizer_8, 1, wx.EXPAND, 0)
         sizer_3.Add(sizer_7, 1, wx.EXPAND, 0)
@@ -331,6 +303,55 @@ class MyFrame(wx.Frame):
             5         : 'grade',
             6         : 'course'}
         
+        # recolhe os valores dos objectos
+        years, groupby = self.get_object_values()
+        count = count_values.get(self.radio_box_1.GetSelection())
+        
+        # check years
+        years_ok = self.check_true_value(years)
+        
+        if years_ok == False:
+            dial = wx.MessageDialog(None, 'You need to choose at least one year option!', 'Years',
+                wx.OK | wx.ICON_EXCLAMATION)
+            ret = dial.ShowModal()
+            self.set_status_bar_ready(True)
+            return
+            
+        # check groupby
+        groupby_ok = self.check_true_value(groupby)
+        
+        if groupby_ok == False:
+            dial = wx.MessageDialog(None, 'You need to choose at least one group by option!', 'Group By',
+                wx.OK | wx.ICON_EXCLAMATION)
+            ret = dial.ShowModal()
+            self.set_status_bar_ready(True)
+            return
+
+        
+        # get statistics based on criteria
+        self.main.get_statistics(years, groupby, count)
+        
+        # set status bar text
+        self.set_status_bar_ready(True)
+        event.Skip()
+    pass
+    
+    def check_true_value(self, data):
+        # inicia o valor de has_true a falso
+        has_true = False
+        
+        # procura valores de true
+        for i in data:
+            if i[1] == True:
+                has_true = True
+            pass
+        pass
+        
+        # retorna a informação se contém algum a true
+        return has_true
+    pass
+    
+    def get_object_values(self):
         # years data
         years = []
         years.append([0, self.chk_year_0.GetValue()])
@@ -354,51 +375,10 @@ class MyFrame(wx.Frame):
         groupby.append(['system', self.chk_gb_system.GetValue()])
         groupby.append(['teacher', self.chk_gb_teacher.GetValue()])
         groupby.append(['year', self.chk_gb_year.GetValue()])
-             
-        # count
-        count = count_values.get(self.radio_box_1.GetSelection())
         
-        # check years
-        years_ok = False
-        
-        for x in years:
-            if x[1] == True:
-                years_ok = True
-                pass
-            pass
-        pass
-        
-        if years_ok == False:
-            dial = wx.MessageDialog(None, 'You need to choose at least one year option!', 'Years',
-                wx.OK | wx.ICON_EXCLAMATION)
-            ret = dial.ShowModal()
-            self.set_status_bar_ready(True)
-            return
-            
-        # check groupby
-        groupby_ok = False
-        
-        for x in groupby:
-            if x[1] == True:
-                groupby_ok = True
-                pass
-            pass
-        pass
-        
-        if groupby_ok == False:
-            dial = wx.MessageDialog(None, 'You need to choose at least one group by option!', 'Group By',
-                wx.OK | wx.ICON_EXCLAMATION)
-            ret = dial.ShowModal()
-            self.set_status_bar_ready(True)
-            return
-
-        
-        # get statistics based on criteria
-        self.main.get_statistics(years, groupby, count)
-        
-        # set status bar text
-        self.set_status_bar_ready(True)
-        event.Skip()
+        # retorna os valores
+        return years, groupby
+    pass
         
     # set status bar text
     def set_status_bar_ready(self, ready):
@@ -409,6 +389,50 @@ class MyFrame(wx.Frame):
             self.Rebides_statusbar.SetStatusText("Working...", 0)
             pass
         pass
+    pass
+
+    def evt_generate_lists(self, event): # wxGlade: MyFrame.<event_handler>
+        self.set_status_bar_ready(False)
+        
+        count_values = {
+            0         : 'teacher',
+            1         : 'establishment',
+            2         : 'category',
+            3         : 'system',
+            4         : 'establishment_type',
+            5         : 'grade',
+            6         : 'course'}
+        
+        # recolhe os valores dos objectos
+        years, groupby = self.get_object_values()
+        
+        # check years
+        years_ok = self.check_true_value(years)
+        
+        if years_ok == False:
+            dial = wx.MessageDialog(None, 'You need to choose at least one year option!', 'Years',
+                wx.OK | wx.ICON_EXCLAMATION)
+            ret = dial.ShowModal()
+            self.set_status_bar_ready(True)
+            return
+            
+        # check groupby
+        groupby_ok = self.check_true_value(groupby)
+        
+        if groupby_ok == False:
+            dial = wx.MessageDialog(None, 'You need to choose at least one group by option!', 'Group By',
+                wx.OK | wx.ICON_EXCLAMATION)
+            ret = dial.ShowModal()
+            self.set_status_bar_ready(True)
+            return
+
+        
+        # get statistics based on criteria
+        self.main.get_lists(groupby, years)
+        
+        # set status bar text
+        self.set_status_bar_ready(True)
+        event.Skip()
     pass
 
 # end of class MyFrame

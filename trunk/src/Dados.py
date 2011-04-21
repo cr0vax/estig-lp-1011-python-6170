@@ -99,11 +99,12 @@ class Dados:
         
         FD = 'fd.'
         
-        sqlselect = ','.join([str(FD + self.data_translator.get(i)[1]) for i in groupby])
-        sqlgroupby = ','.join([str(FD + self.data_translator.get(i)[0]) for i in groupby])
-        sqlwhere = ','.join([str(i) for i in years])
+        print "get_lists(select):", select
+        print "get_lists(where):", where
+        sqlselect = ','.join([str(FD + self.data_translator.get(i)[1]) for i in select])
+        sqlwhere = ','.join([str(i) for i in where])
                 
-        cmd = """SELECT
+        cmd = """SELECT DISTINCT
                     {0}
                  FROM
                     Fichas_Docencia fd
@@ -122,11 +123,9 @@ class Dados:
                  INNER JOIN docentes d on
                     fd.id_docente = d.id_docente
                  WHERE
-                    ano in ({2})
-                 GROUP BY {3}""".\
+                    ano in ({1})""".\
                     format(sqlselect,
-                           sqlwhere,
-                           sqlgroupby)
+                           sqlwhere)
                         
         try:
             self.cursor.execute(cmd)

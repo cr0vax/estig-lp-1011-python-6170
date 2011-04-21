@@ -67,7 +67,7 @@ class Html:
     def add_statistics_to_index(self, file):
 
         # definição de variaveis
-        BASE_URL = 'html/statistics'
+        BASE_URL = 'html/custom'
         
         # adiciona o título
         file.write('<tr bgcolor={0}><td>\
@@ -96,7 +96,7 @@ class Html:
     def add_lists_to_index(self, file):
 
         # definição de variaveis
-        BASE_URL = 'html/lists'
+        BASE_URL = 'html/custom'
         
         # adiciona o título
         file.write('<tr bgcolor={0}><td>\
@@ -127,7 +127,7 @@ class Html:
         
         # adiciona o título
         file.write('<tr bgcolor={0}><td>\
-            Anos disponíveis na BD Rebides</td></tr>'.\
+            Dados disponíveis na BD Rebides</td></tr>'.\
             format(self.HEADER_COLOR))
         
         # Adiciona os anos
@@ -350,7 +350,7 @@ class Html:
     def create_statistics_page(self, title, data, column_names, file_name):
         
         # cria a pasta das estatisticas
-        path = 'html/statistics'
+        path = 'html/custom'
         if not os.path.isdir(path):
             os.makedirs(path)
         pass
@@ -377,6 +377,54 @@ class Html:
                     file.write('<td>{0}</td>'.format(column))
                     continue
                 pass
+            pass
+            file.write('</tr>')
+        pass
+        
+        # conclui a página
+        self.end_page(file, descriptive_path, path)
+    pass
+    
+    #---------------------------------------
+    # Cria uma página com uma lista
+    #
+    #   title       - título da estatistica
+    #   data        - dados para construir a página
+    #   column_names- nomes das colunas das estatisticas
+    #   file_name   - nome do ficheiro a ser criado
+    #---------------------------------------
+    def create_lists_page(self, title, data, column_names, file_name):
+        
+        # cria a pasta fdas estatisticas
+        path = 'html/custom'
+        if not os.path.isdir(path):
+            os.makedirs(path)
+        pass
+        
+        #cria o ficheiro
+        file = open(path + '/' + file_name,"wb")
+                
+        # escreve o caminho da página
+        descriptive_path = 'Rebides/' + title
+
+        # inicia a página
+        print "Column Names:", column_names
+        self.start_page(file, descriptive_path, path, column_names)
+        
+        # adiciona conteúdo
+        for row in data:
+            file.write('<tr>')
+            for column in row:
+                try:
+                    encoded_column = column.encode('utf-8')
+                    file.write('<td>{0}</td>'.format(encoded_column))
+                except:
+                    file.write('<td>{0}</td>'.format(column))
+                    continue
+                pass
+                
+                # guarda o último valor
+                last_column = encoded_column
             pass
             file.write('</tr>')
         pass
